@@ -1,4 +1,4 @@
-# airquality
+# airquality 💨🌪️
 Project Title and Description:
 --Clearly state what your project does.
 --Provide a brief overview.
