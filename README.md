@@ -17,7 +17,7 @@ Python 3.x - Programming language used
 Matplotlib and Plotly - Libraries used for generating visualizations.
 
 Authors:
-- Tim Schlatter
+- Tim Schlatter - Timsched
 - Titaporn Janjumratsang - nam32
-- Hector
-- Julian
+- Hector Arribas Arias - Hecthor1999
+- Julian Niklaus - JuNi-2000
