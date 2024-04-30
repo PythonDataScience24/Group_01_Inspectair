@@ -5,17 +5,15 @@ import matplotlib
 matplotlib.use('agg')
 import os
 
-#os.getcwd()
-#directory = "C:\\airquality"
-#os.chdir(directory)
+os.getcwd()
+directory = "C:\inspectair\Group_01_Inspectair"
+os.chdir(directory)
 
 # https://dash.plotly.com/basic-callbacks
 app = Dash(__name__)
 
 # use your path to the excel file with data
 df = pd.read_excel(".//who_ambient_air_quality_database_version_2024_(v6.1).xlsx", sheet_name="Update 2024 (V6.1)")
-pollutants=['pm10_concentration', 'pm25_concentration', 'no2_concentration']
-pollutants_options = [{'label': name, 'value': name} for name in pollutants]
 
 pollutants=['pm10_concentration', 'pm25_concentration', 'no2_concentration']
 pollutants_options = [{'label': name, 'value': name} for name in pollutants]
