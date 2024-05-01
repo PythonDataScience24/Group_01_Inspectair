@@ -143,7 +143,9 @@ def update_graph(pollutant):
 
     #extract top 10 polluted cities (for now only most recent year = 2022)
     dff_2022 = dff[dff.year == 2022]
+    #add log pollutant entry to dataframe
     dff_2022[f'log_{pollutant}'] = np.log(dff_2022[pollutant])
+    #create complete list of pollutants including log pollutants
     log_pollutants = ["pm25_aqi", "pm10_aqi", "no2_aqi", f'log_{pollutant}']
     mean_city_2022 = pd.pivot_table(data=dff_2022, index=['city'], aggfunc='mean', values=log_pollutants)
     top_ranked_10 = mean_city_2022.sort_values(by=pollutant, ascending=False)[0:10]
@@ -181,6 +183,7 @@ def update_graph(pollutant):
     "#FFFF00", "#FFEA00", "#FFD400", "#FFBF00", "#FFAA00",
     "#FF9500", "#FF8000", "#FF6A00", "#FF5500", "#FF4000"]
     fig_top_10 = plt.figure(figsize=(10, 5), constrained_layout=True)
+    #define xlim as max value of top ranked log pollutant
     xlim = ceil(np.max(top_ranked_10[f'log_{pollutant}'].values))
     #create horizontal barplot
     plt.barh(top_ranked_10[f'log_{pollutant}'].index, top_ranked_10[f'log_{pollutant}'].values, color=color_palette_top_10)
