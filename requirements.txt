@@ -1,9 +1,9 @@
-## Requirements
+Requirements
 
-### System Requirements
+System Requirements
 - Python 3.8 or higher
 
-### Dependencies
+Dependencies
 This application is built using Python and requires the following Python libraries to be installed:
 
 - **Dash**: A Python framework for building analytical web applications
@@ -14,5 +14,5 @@ This application is built using Python and requires the following Python librari
 
 To install all required Python libraries, run the following command in your terminal:
 
-```bash
+bash
 pip install dash pandas plotly numpy matplotlib
