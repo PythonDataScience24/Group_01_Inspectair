@@ -185,7 +185,8 @@ def update_graph(pollutant):
     #create horizontal barplot
     plt.barh(top_ranked_10[f'log_{pollutant}'].index, top_ranked_10[f'log_{pollutant}'].values, color=color_palette_top_10)
     plt.xlabel(f'Log {legends[pollutant]}')
-    plt.title('Top 10 most polluted cities in 2022 (average values are shown; low value is better)')
+    plt.title(('Top 10 most polluted cities in 2022 (average values are shown; low value is better)\n'
+               'NON-transformed numbers are shown in plot'))    
     plt.xlim([0,xlim])
     plt.gca().spines['top'].set_visible(False) 
     plt.gca().spines['right'].set_visible(False) 
@@ -212,7 +213,8 @@ def update_graph(pollutant):
     plt.barh(bottom_ranked_10[f'log_{pollutant}'].index, bottom_ranked_10[f'log_{pollutant}'].values, 
              color=color_palette_bottom_10)
     plt.xlabel(f'Log {legends[pollutant]}')
-    plt.title('Top 10 least polluted cities in 2022 (average values are shown; low value is better)')
+    plt.title(('Top 10 least polluted cities in 2022 (average values are shown; low value is better)\n'
+               'NON-transformed numbers are shown in plot'))
     plt.xlim([0,xlim])
     plt.gca().spines['top'].set_visible(False) 
     plt.gca().spines['right'].set_visible(False) 
