@@ -222,7 +222,7 @@ def update_graph(pollutant):
     x = bottom_ranked_10[f'log_{pollutant}'].values
     for i in range(len(x)):
         plt.text(x=(x[i]+0.1), y=i, s=round(s[i], 2), va='baseline')
-    plt.legend(loc="upper right")
+    
 
     # Save figure to a temporary buffer.
     buf = BytesIO()
