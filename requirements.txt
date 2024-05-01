@@ -1,1 +1,18 @@
+## Requirements
 
+### System Requirements
+- Python 3.8 or higher
+
+### Dependencies
+This application is built using Python and requires the following Python libraries to be installed:
+
+- **Dash**: A Python framework for building analytical web applications
+- **Pandas**: A Python data analysis tools library
+- **Plotly**: A Python graphing library
+- **NumPy**: A Python containing mathematical functions to operate on arrays
+- **Matplotlib**: A Python plotting library providing an object-oriented API for embedding plots into applications.
+
+To install all required Python libraries, run the following command in your terminal:
+
+```bash
+pip install dash pandas plotly numpy matplotlib
