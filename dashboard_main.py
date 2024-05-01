@@ -141,7 +141,7 @@ def update_graph(pollutant):
 
     df_pollutant_mean_year = pd.pivot_table(data=dff, index=indices, columns=columns, aggfunc='mean', values=pollutants)
 
-    #extract top 10 polluted cities (for now only most recent year)
+    #extract top 10 polluted cities (for now only most recent year = 2022)
     dff_2022 = dff[dff.year == 2022]
     dff_2022[f'log_{pollutant}'] = np.log(dff_2022[pollutant])
     log_pollutants = ["pm25_aqi", "pm10_aqi", "no2_aqi", f'log_{pollutant}']
@@ -189,7 +189,7 @@ def update_graph(pollutant):
     plt.xlim([0,xlim])
     plt.gca().spines['top'].set_visible(False) 
     plt.gca().spines['right'].set_visible(False) 
-    #add the non transformed values to the as text
+    #add the non transformed values to the plot as text
     s = top_ranked_10[pollutant].values
     x = top_ranked_10[f'log_{pollutant}'].values
     for i in range(len(x)):
@@ -232,7 +232,6 @@ def update_graph(pollutant):
     fig_bar_matplotlib_bottom = f'data:image/png;base64,{fig_data}'
     
     return fig, fig_bar_matplotlib, fig_bar_matplotlib_bottom
-
 
 
 if __name__ == '__main__':
