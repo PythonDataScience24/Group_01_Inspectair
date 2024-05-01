@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 import matplotlib
 matplotlib.use('agg')
 import os
+import numpy as np
 
 os.getcwd()
 directory = "C:\inspectair\Group_01_Inspectair"
@@ -15,7 +16,47 @@ app = Dash(__name__)
 # use your path to the excel file with data
 df = pd.read_excel(".//who_ambient_air_quality_database_version_2024_(v6.1).xlsx", sheet_name="Update 2024 (V6.1)")
 
-pollutants=['pm10_concentration', 'pm25_concentration', 'no2_concentration']
+def lerp(low_aqi, high_aqi, low_conc, high_conc, conc):
+    return low_aqi + (conc - low_conc) * (high_aqi - low_aqi) / (high_conc - low_conc)
+
+def calculate_aqi(pollutant_type, concentrations):
+    aqi_values = []
+    for conc in concentrations:
+        if np.isnan(conc):
+            aqi_values.append(None)
+            continue
+        
+        conc = max(conc, 0)  # Ensure no negative concentrations
+        if pollutant_type == 'no2':
+            breakpoints = [(0, 53, 0, 50), (54, 100, 51, 100), (101, 360, 101, 150),
+                           (361, 649, 151, 200), (650, 1249, 201, 300), (1250, 1649, 301, 400),
+                           (1650, 2049, 401, 500)]
+        elif pollutant_type == 'pm25':
+            breakpoints = [(0.0, 12.0, 0, 50), (12.1, 35.4, 51, 100), (35.5, 55.4, 101, 150),
+                           (55.5, 150.4, 151, 200), (150.5, 250.4, 201, 300), (250.5, 350.4, 301, 400),
+                           (350.5, 500.4, 401, 500)]
+        elif pollutant_type == 'pm10':
+            breakpoints = [(0, 12, 0, 50), (12.1, 35.4, 51, 100), (35.5, 55.4, 101, 150),
+                           (55.5, 150.4, 151, 200), (150.5, 100.4, 201, 300), (100.5, 350.4, 301, 400),
+                           (350.5, 500.4, 401, 500)]
+        else:
+            raise ValueError("Unsupported pollutant type")
+
+        aqi = 500  # Default AQI if concentration is beyond the highest range
+        for (low_conc, high_conc, low_aqi, high_aqi) in breakpoints:
+            if low_conc <= conc <= high_conc:
+                aqi = lerp(low_aqi, high_aqi, low_conc, high_conc, conc)
+                break
+        
+        aqi_values.append(round(aqi))
+    
+    return aqi_values
+
+df["pm25_aqi"] = pd.DataFrame(calculate_aqi("pm25", (df["pm25_concentration"]).to_numpy()))
+df["pm10_aqi"] = pd.DataFrame(calculate_aqi("pm10", (df["pm10_concentration"]).to_numpy()))
+df["no2_aqi"] = pd.DataFrame(calculate_aqi("no2", (df["no2_concentration"]).to_numpy()))
+
+pollutants=["pm25_aqi", "pm10_aqi", "no2_aqi"]
 pollutants_options = [{'label': name, 'value': name} for name in pollutants]
 
 # app layout
@@ -55,9 +96,9 @@ def update_graph(pollutant):
     }
 
     legends = {
-        'pm10_concentration': 'pm 10 concentration',
-        'pm25_concentration': 'pm 2.5 concentration',
-        'no2_concentration': 'NO2 concentration'
+        'pm25_aqi': 'pm 10 aqi',
+        'pm10_aqi': 'pm 2.5 aqi',
+        'no2_aqi': 'NO2 aqi'
     }
 
     colors=['brown', 'red', 'purple', 'pink', 'green', 'black', 'blue']
@@ -82,7 +123,7 @@ def update_graph(pollutant):
         ))
 
     fig.update_layout(
-        title = pollutant + ' Concentration Across Different Continents',
+        title = pollutant + ' aqi Across Different Continents',
         xaxis_title = 'Year',
         yaxis_title = legends[pollutant],
         legend_title = 'Region',
