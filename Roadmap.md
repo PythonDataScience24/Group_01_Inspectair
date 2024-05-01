@@ -4,10 +4,14 @@
 - name ✔️
 - create readME and roadmap ✔️
 - Set up GitHub ✔️
-- Import data as dataframe with correct format
-- GUI search bar for individual countries (=> user explores dataset himself/herself)
-- get a basic working world map which can be coloured by coordinates 
-- learn how to clean the data
+- Import data as dataframe with correct format ✔️
+- GUI search bar for pollutants (=> user explores dataset himself/herself) ✔️
+- get a basic working world map which can be coloured by coordinates (for world pollution visualization) ✔️
+- learn how to clean the data ✔️
+
+End of week 1 reflections (tasks carried forward):
+- layout adjustment to dashboard needed
+- Dropdown list expansion needed to further filter data
 
 ## week 2 (16/05/24)
 - get the map to work on our data
