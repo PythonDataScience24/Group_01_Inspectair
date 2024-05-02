@@ -11,8 +11,9 @@ This application is built using Python and requires the following Python librari
 - **Plotly**: A Python graphing library
 - **NumPy**: A Python containing mathematical functions to operate on arrays
 - **Matplotlib**: A Python plotting library providing an object-oriented API for embedding plots into applications.
+- **Folium** A python package for creating maps which acts a wrapper for the javascript library leaflet.js 
 
 To install all required Python libraries, run the following command in your terminal:
 
 bash
-pip install dash pandas plotly numpy matplotlib
+pip install dash pandas plotly numpy matplotlib Folium
