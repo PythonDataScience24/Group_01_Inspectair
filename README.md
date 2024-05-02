@@ -17,7 +17,7 @@ Presequisites:
 Built With
 Programming language used
 
-Python 3.x  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/0d465b06-0602-4275-a44d-682b4ced0a12" width="37" height="20">
+Python 3.x  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/b7d12eed-aff4-41c0-981c-25d4d78bbef8" width="37" height="20">
 
 Libraries used for generating visualizations.
 
