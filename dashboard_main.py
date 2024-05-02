@@ -130,21 +130,38 @@ gradient = {
 if selection == "pm25":
     # Filter data for PM2.5
     data_pm25 = df[["latitude", "longitude", "pm25_aqi"]].dropna()
-    folium.plugins.HeatMap(data_pm25, min_opacity=0.3, blur=23, gradient=gradient).add_to(m)
+    folium.plugins.HeatMap(data_pm25, min_opacity=0.3, blur=15, gradient=gradient).add_to(m)
     # Print the map
     m
 elif selection == "pm10":
     # Filter data for PM10
     data_pm10 = df[["latitude", "longitude", "pm10_aqi"]].dropna()
-    folium.plugins.HeatMap(data_pm10, min_opacity=0.3, blur=23, gradient=gradient).add_to(m)
+    folium.plugins.HeatMap(data_pm10, min_opacity=0.3, blur=15, gradient=gradient).add_to(m)
      # Print the map
     m
 elif selection == "no2":
     # Filter data for NO2
     data_no2 = df[["latitude", "longitude", "no2_aqi"]].dropna()
-    folium.plugins.HeatMap(data_no2, min_opacity=0.3, blur=23, gradient=gradient).add_to(m)
+    folium.plugins.HeatMap(data_no2, min_opacity=0.3, blur=15, gradient=gradient).add_to(m)
      # Print the map
     m 
+
+
+# control layers 
+folium.TileLayer("OpenStreetMap").add_to(m)
+# Add the heatmap tile layer
+heatmap_tiles = 'https://your-heatmap-tiles-url.com/{z}/{x}/{y}.png'
+heatmap_layer = folium.TileLayer(
+    tiles=heatmap_tiles,
+    attr='Your attribution here',  # Add appropriate attribution
+    name='Heatmap'  # Specify the name for the layer control
+)
+heatmap_layer.add_to(m)
+
+folium.LayerControl().add_to(m)
+
+# add legend to map
+
 
 # App layout
 app.layout = html.Div([
