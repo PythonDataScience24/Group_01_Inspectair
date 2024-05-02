@@ -15,9 +15,17 @@ Presequisites:
 - pip (Python package installer)
 
 Built With
-Python 3.x - Programming language used
+Programming language used
 
-Matplotlib, Plotly and Folium - Libraries used for generating visualizations.
+Python 3.x  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/0d465b06-0602-4275-a44d-682b4ced0a12" width="37" height="20">
+
+Libraries used for generating visualizations.
+
+Matplotlib <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/c83effe2-6e1e-4a1f-9bf3-a199752b5fcb" width="27" height="25">
+
+Plotly <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/e4d20f34-78bc-4180-a306-6d7c3a2b0cfc" width="38" height="25"> 
+
+Folium <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/cb8513f7-909e-4ea8-94a8-7b291ccd6857"  width="30" height="25">
 
 Authors:
 - Tim Schlatter - Timsched
