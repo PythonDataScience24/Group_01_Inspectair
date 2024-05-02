@@ -16,6 +16,7 @@ Presequisites:
 
 Built With
 Python 3.x - Programming language used
+
 Matplotlib, Plotly and Folium - Libraries used for generating visualizations.
 
 Authors:
