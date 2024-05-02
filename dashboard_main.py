@@ -23,9 +23,6 @@ os.getcwd()
 app = Dash(__name__)
 
 # Import data
-workbook = op.load_workbook("C:/Users/hecto/OneDrive/Escritorio/Master Bioinformatics/2º semester/Advanced python and programming for data science/group projects/Air filter quality dashboard/who_ambient_air_quality_database_version_2024_(v6.1).xlsx")
-
-# Use your path to the excel file with data (this will be changed later to an online version or possibly a real time version)
 df = pd.read_excel("who_ambient_air_quality_database_version_2024_(v6.1).xlsx", sheet_name="Update 2024 (V6.1)")
 
 # Airquality are usually measured in aqi when target app audience are general public for ease of data intepretation and we will do that here using lerp and calculate_aqi function
@@ -91,6 +88,63 @@ df["no2_aqi"] = pd.DataFrame(calculate_aqi("no2", (df["no2_concentration"]).to_n
 # Define data column to fetch on dropdown interactive filter
 pollutants=["pm25_aqi", "pm10_aqi", "no2_aqi"]
 pollutants_options = [{'label': name, 'value': name} for name in pollutants]
+
+def update_map(selection):
+    if selection == "pm25":
+        data = data_pm25
+    elif selection == "pm10":
+        data = data_pm10
+    elif selection == "no2":
+        data = data_no2
+    
+    # Generate Folium heatmap based on data
+    heatmap = folium.plugins.HeatMap(data, min_opacity=0.3, blur=30, gradient=gradient)
+    m = folium.Map(location=[0, 0], zoom_start=2)
+    heatmap.add_to(m)
+    
+    # Return the map HTML representation to update the iframe
+    return m._repr_html_()
+
+# Select a pollutant type
+selection = input("Please choose a pollutant type (pm25, pm10, no2): ").lower().strip()
+
+# Check if the selection is valid
+while selection not in ["pm25", "pm10", "no2"]:
+    selection = input("Invalid selection. Please choose a pollutant type (pm25, pm10, no2): ").lower().strip()
+
+# Initialize a Folium map centered around a specific location (e.g., world map)
+m = folium.Map(location=[0, 0], zoom_start=2)  # Centered at (latitude, longitude), zoom level 2
+
+# Create gradient dictionary based on AQI thresholds
+gradient = {
+    # the numbers for the gradient have to be between 0 and 1
+    1.0: "maroon",        # Corresponds to normalized AQI value >= 250/500.4
+    0.75: "purple",       # Corresponds to normalized AQI value >= 150/500.4
+    0.5: "red",           # Corresponds to normalized AQI value >= 55/500.4
+    0.35: "orange",       # Corresponds to normalized AQI value >= 35/500.4
+    0.24: "yellow",       # Corresponds to normalized AQI value >= 12/500.4
+    0.0: "green"          # Corresponds to normalized AQI value >= 0
+}
+
+# Create a heatmap based on the selected pollutant type
+if selection == "pm25":
+    # Filter data for PM2.5
+    data_pm25 = df[["latitude", "longitude", "pm25_aqi"]].dropna()
+    folium.plugins.HeatMap(data_pm25, min_opacity=0.3, blur=23, gradient=gradient).add_to(m)
+    # Print the map
+    m
+elif selection == "pm10":
+    # Filter data for PM10
+    data_pm10 = df[["latitude", "longitude", "pm10_aqi"]].dropna()
+    folium.plugins.HeatMap(data_pm10, min_opacity=0.3, blur=23, gradient=gradient).add_to(m)
+     # Print the map
+    m
+elif selection == "no2":
+    # Filter data for NO2
+    data_no2 = df[["latitude", "longitude", "no2_aqi"]].dropna()
+    folium.plugins.HeatMap(data_no2, min_opacity=0.3, blur=23, gradient=gradient).add_to(m)
+     # Print the map
+    m 
 
 # App layout
 app.layout = html.Div([
@@ -201,13 +255,13 @@ def update_graph(pollutant):
         template = 'plotly_white'
     )
 
-    #build the top 10 ranking plot
+     #build the top 10 ranking plot
     color_palette_top_10 = [
     "#FFFF00", "#FFEA00", "#FFD400", "#FFBF00", "#FFAA00",
     "#FF9500", "#FF8000", "#FF6A00", "#FF5500", "#FF4000"]
     fig_top_10 = plt.figure(figsize=(10, 5), constrained_layout=True)
     #define xlim as max value of top ranked log pollutant
-    xlim = ceil(np.max(top_ranked_10[f'log_{pollutant}'].values))
+    xlim = np.ceil(np.max(top_ranked_10[f'log_{pollutant}'].values))
     #create horizontal barplot
     plt.barh(top_ranked_10[f'log_{pollutant}'].index, top_ranked_10[f'log_{pollutant}'].values, color=color_palette_top_10)
     plt.xlabel(f'Log {legends[pollutant]}')
@@ -260,67 +314,6 @@ def update_graph(pollutant):
     fig_bar_matplotlib_bottom = f'data:image/png;base64,{fig_data}'
     
     return fig, fig_bar_matplotlib, fig_bar_matplotlib_bottom
-
-
-
-def update_map(selection):
-    if selection == "pm25":
-        data = data_pm25
-    elif selection == "pm10":
-        data = data_pm10
-    elif selection == "no2":
-        data = data_no2
-    
-    # Generate Folium heatmap based on data
-    heatmap = folium.plugins.HeatMap(data, min_opacity=0.3, blur=30, gradient=gradient)
-    m = folium.Map(location=[0, 0], zoom_start=2)
-    heatmap.add_to(m)
-    
-    # Return the map HTML representation to update the iframe
-    return m._repr_html_()
-
-# Map builder
-# Initialize a Folium map centered around a specific location (e.g., world map)
-m = folium.Map(location=[0, 0], zoom_start=2)  # Centered at (latitude, longitude), zoom level 2
-
-# Select a pollutant type
-selection = input("Please choose a pollutant type (pm25, pm10, no2): ").lower().strip()
-
-# Check if the selection is valid
-while selection not in ["pm25", "pm10", "no2"]:
-    selection = input("Invalid selection. Please choose a pollutant type (pm25, pm10, no2): ").lower().strip()
-
-
-# Create gradient dictionary based on AQI thresholds
-gradient = {
-    # the numbers for the gradient have to be between 0 and 1
-    1.0: "maroon",        # Corresponds to normalized AQI value >= 250/500.4
-    0.75: "purple",       # Corresponds to normalized AQI value >= 150/500.4
-    0.5: "red",           # Corresponds to normalized AQI value >= 55/500.4
-    0.35: "orange",       # Corresponds to normalized AQI value >= 35/500.4
-    0.24: "yellow",       # Corresponds to normalized AQI value >= 12/500.4
-    0.0: "green"          # Corresponds to normalized AQI value >= 0
-}
-
-# Create a heatmap based on the selected pollutant type
-if selection == "pm25":
-    # Filter data for PM2.5
-    data_pm25 = df[["latitude", "longitude", "pm25_aqi"]].dropna()
-    folium.plugins.HeatMap(data_pm25, min_opacity=0.3, blur=23, gradient=gradient).add_to(m)
-    # Print the map
-    m
-elif selection == "pm10":
-    # Filter data for PM10
-    data_pm10 = df[["latitude", "longitude", "pm10_aqi"]].dropna()
-    folium.plugins.HeatMap(data_pm10, min_opacity=0.3, blur=23, gradient=gradient).add_to(m)
-     # Print the map
-    m
-elif selection == "no2":
-    # Filter data for NO2
-    data_no2 = df[["latitude", "longitude", "no2_aqi"]].dropna()
-    folium.plugins.HeatMap(data_no2, min_opacity=0.3, blur=23, gradient=gradient).add_to(m)
-     # Print the map
-    m 
 
 
 if __name__ == '__main__':
