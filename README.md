@@ -15,11 +15,11 @@ Presequisites:
 - pip (Python package installer)
 
 Built With
-Programming language used
+Programming languages:
 
 Python 3.x  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/b7d12eed-aff4-41c0-981c-25d4d78bbef8" width="42" height="24">
 
-Libraries used for generating visualizations.
+Libraries used for generating visualizations:
 
 Matplotlib <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/c83effe2-6e1e-4a1f-9bf3-a199752b5fcb" width="27" height="25">
 
