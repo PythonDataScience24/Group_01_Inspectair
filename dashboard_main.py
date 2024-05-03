@@ -172,7 +172,6 @@ folium.LayerControl().add_to(m)
 
 # add legend to map
 
-
 # App layout
 app.layout = html.Div([
     html.Div([
@@ -256,7 +255,6 @@ def update_graph(pollutant):
     #reverse order for horizontal barplot
     top_ranked_10 = top_ranked_10.sort_values(by=pollutant)
     
-    
     #extract 10 least polluted cities (for now only most recent year)
     bottom_ranked_10 = mean_city_2022.sort_values(by=pollutant, ascending=True)[0:10]
     #reverse order for horizontal barplot
@@ -283,9 +281,8 @@ def update_graph(pollutant):
     )
 
      #build the top 10 ranking plot
-    color_palette_top_10 = [
-    "#FFFF00", "#FFEA00", "#FFD400", "#FFBF00", "#FFAA00",
-    "#FF9500", "#FF8000", "#FF6A00", "#FF5500", "#FF4000"]
+    color_palette_top_10 = ["#FFFF00", "#FFEA00", "#FFD400", "#FFBF00", "#FFAA00",
+                            "#FF9500", "#FF8000", "#FF6A00", "#FF5500", "#FF4000"]
     fig_top_10 = plt.figure(figsize=(10, 5), constrained_layout=True)
     #define xlim as max value of top ranked log pollutant
     xlim = np.ceil(np.max(top_ranked_10[f'log_{pollutant}'].values))
@@ -307,9 +304,8 @@ def update_graph(pollutant):
     fig_bar_matplotlib = save_temporary_buffer(fig_top_10)
     
     #build bottom 10 ranking plot
-    color_palette_bottom_10 = [
-    "#e6ff66", "#ccff33", "#b3ff00", "#99e600", "#80cc00", 
-    "#66b300", "#4d9900","#338000", "#1a6600", "#004d00"]
+    color_palette_bottom_10 = ["#e6ff66", "#ccff33", "#b3ff00", "#99e600", "#80cc00", 
+                                "#66b300", "#4d9900","#338000", "#1a6600", "#004d00"]
     #build horizontal barplot
     fig_bottom_10 = plt.figure(figsize=(10, 5), constrained_layout=True)
     #create horizontal barplot
