@@ -294,25 +294,27 @@ def update_graph(pollutant):
     #reverse order for horizontal barplot
     top_ranked_10 = top_ranked_10.sort_values(by=pollutant)
 
-    #get the color palette and category for the aqi values
+    #get top 10 aqi values for current pollutant
     top_10_aqi= top_ranked_10[pollutant].values
-
+    
     top_10_aqi_colors = []
     top_10_aqi_category = []
+    #get the corresponding color palette and category to the aqi values
     for number in top_10_aqi:
         category, color = assign_aqi_message(number)
         top_10_aqi_colors.append(color)
         top_10_aqi_category.append(category)
     
-    #define the parameters for the plot
+    #define the parameters for the ranking plot plot
     x = top_ranked_10[f'log_{pollutant}'].index
     y = top_ranked_10[f'log_{pollutant}'].values
     title = ('Top 10 most polluted cities in 2022 (average values are shown; low value is better)\n'
-               'NON-transformed numbers are shown in plot')
-    xlim = [0,np.ceil(np.max(top_ranked_10[f'log_{pollutant}'].values))]
+             'NON-transformed numbers are shown in plot')
+    xlim = [0, np.ceil(np.max(top_ranked_10[f'log_{pollutant}'].values))]
+    #display non transformed numbers on plot as text
     text = top_ranked_10[pollutant].values
     xlabel = f'Log {legends[pollutant]}'
-    #creates a custom horizontal barplot
+    #create a custom horizontal barplot
     fig_bar_matplotlib = create_ranking_plot(x=x, y=y, color= top_10_aqi_colors, title=title, xlim=xlim, 
                                              xlabel=xlabel, text=text)
    
@@ -323,22 +325,25 @@ def update_graph(pollutant):
     #reverse order for horizontal barplot
     bottom_ranked_10 = bottom_ranked_10.sort_values(by=pollutant, ascending=False)
 
+    #get bottom 10 aqi values for current pollutant
     bottom_10_aqi= bottom_ranked_10[pollutant].values
     bottom_10_aqi_colors = []
     bottom_10_aqi_category = []
 
+    #get the corresponding color palette and category to the aqi values
     for number in bottom_10_aqi:
         category, color = assign_aqi_message(number)
         bottom_10_aqi_colors.append(color)
         bottom_10_aqi_category.append(category)   
 
+    #define parameters for ranking plot
     x = bottom_ranked_10[f'log_{pollutant}'].index
     y = bottom_ranked_10[f'log_{pollutant}'].values
     title = ('Top 10 least polluted cities in 2022 (average values are shown; low value is better)\n'
              'NON-transformed numbers are shown in plot')
     text = bottom_ranked_10[pollutant].values
     xlabel = f'Log {legends[pollutant]}'
-    #creates a custom horizontal barplot
+    #create a custom horizontal barplot
     fig_bar_matplotlib_bottom = create_ranking_plot(x=x, y=y, color= bottom_10_aqi_colors, title=title, xlim=xlim, 
                                              xlabel=xlabel, text=text)
    
