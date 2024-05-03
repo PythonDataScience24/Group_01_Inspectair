@@ -89,6 +89,16 @@ df["no2_aqi"] = pd.DataFrame(calculate_aqi("no2", (df["no2_concentration"]).to_n
 pollutants=["pm25_aqi", "pm10_aqi", "no2_aqi"]
 pollutants_options = [{'label': name, 'value': name} for name in pollutants]
 
+def save_temporary_buffer(matplotlib_graph):
+    #function saves an input plot into temporary buffer
+    #and embeds the result into html output
+    buf = BytesIO()
+    matplotlib_graph.savefig(buf, format="png")
+    # Embed the result in the html output.
+    fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
+    final_graph = f'data:image/png;base64,{fig_data}'
+    return final_graph
+
 def update_map(selection):
     if selection == "pm25":
         data = data_pm25
@@ -292,13 +302,9 @@ def update_graph(pollutant):
     x = top_ranked_10[f'log_{pollutant}'].values
     for i in range(len(x)):
         plt.text(x=(x[i]+0.1), y=i, s=round(s[i], 2), va='baseline')
-        
-    # Save figure to a temporary buffer.
-    buf = BytesIO()
-    fig_top_10.savefig(buf, format="png")
-    # Embed the result in the html output.
-    fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
-    fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'#
+
+    #save to temp. buffer and embed into html output  
+    fig_bar_matplotlib = save_temporary_buffer(fig_top_10)
     
     #build bottom 10 ranking plot
     color_palette_bottom_10 = [
@@ -321,14 +327,8 @@ def update_graph(pollutant):
     x = bottom_ranked_10[f'log_{pollutant}'].values
     for i in range(len(x)):
         plt.text(x=(x[i]+0.1), y=i, s=round(s[i], 2), va='baseline')
-    
-
-    # Save figure to a temporary buffer.
-    buf = BytesIO()
-    fig_bottom_10.savefig(buf, format="png")
-    # Embed the result in the html output.
-    fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
-    fig_bar_matplotlib_bottom = f'data:image/png;base64,{fig_data}'
+    #save to temp. buffer and embed into html output  
+    fig_bar_matplotlib_bottom = save_temporary_buffer(fig_bottom_10)
     
     return fig, fig_bar_matplotlib, fig_bar_matplotlib_bottom
 
