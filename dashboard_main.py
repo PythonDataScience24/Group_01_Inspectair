@@ -19,8 +19,12 @@ os.getcwd()
 #directory = "C:\inspectair\Group_01_Inspectair"
 #os.chdir(directory)
 
+
+# define bootsrap stylesheet
+external_stylesheets = [dbc.themes.BOOTSTRAP]
+
 # https://dash.plotly.com/basic-callbacks
-app = Dash(__name__)
+app = Dash(__name__,external_stylesheets=external_stylesheets)
 
 # Import data
 df = pd.read_excel("who_ambient_air_quality_database_version_2024_(v6.1).xlsx", sheet_name="Update 2024 (V6.1)")
@@ -80,6 +84,7 @@ def assign_aqi_message(aqi):
     else:
         return "good", "green"
 
+
 # Applying function to pollutants data and add aqi converted data to the columns
 df["pm25_aqi"] = pd.DataFrame(calculate_aqi("pm25", (df["pm25_concentration"]).to_numpy()))
 df["pm10_aqi"] = pd.DataFrame(calculate_aqi("pm10", (df["pm10_concentration"]).to_numpy()))
@@ -88,6 +93,33 @@ df["no2_aqi"] = pd.DataFrame(calculate_aqi("no2", (df["no2_concentration"]).to_n
 # Define data column to fetch on dropdown interactive filter
 pollutants=["pm25_aqi", "pm10_aqi", "no2_aqi"]
 pollutants_options = [{'label': name, 'value': name} for name in pollutants]
+
+
+def create_ranking_plot(x, y, xlabel, color, title: str, xlim: list, text: list):
+    #function creates matplotlib ranking plot (horizontal barplot), 
+    #saves it to temporary buffer and embeds the result into html
+
+    #create figure
+    fig = plt.figure(figsize=(10, 5), constrained_layout=True)
+    plt.barh(x, y, color=color)
+    plt.xlabel(xlabel)
+    plt.title(title)    
+    plt.xlim(xlim)
+    plt.gca().spines['top'].set_visible(False) 
+    plt.gca().spines['right'].set_visible(False) 
+
+    #add the non transformed values to the plot as text
+    for i in range(len(x)):
+       plt.text(x=(y[i]+0.1), y=i, s=round(text[i], 2), va='baseline')
+
+    #save the plot to temporary buffer
+    buf = BytesIO()
+    fig.savefig(buf, format="png")
+    # Embed the result in the html output.
+    fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
+    final_graph = f'data:image/png;base64,{fig_data}'
+    return final_graph
+
 
 def update_map(selection):
     if selection == "pm25":
@@ -106,7 +138,7 @@ def update_map(selection):
     return m._repr_html_()
 
 # Select a pollutant type
-selection = input("Please choose a pollutant type (pm25, pm10, no2): ").lower().strip()
+selection = "pm25"
 
 # Check if the selection is valid
 while selection not in ["pm25", "pm10", "no2"]:
@@ -130,19 +162,19 @@ gradient = {
 if selection == "pm25":
     # Filter data for PM2.5
     data_pm25 = df[["latitude", "longitude", "pm25_aqi"]].dropna()
-    folium.plugins.HeatMap(data_pm25, min_opacity=0.3, blur=15, gradient=gradient).add_to(m)
+    folium.plugins.HeatMap(data_pm25, min_opacity=0.1, blur=15, gradient=gradient).add_to(m)
     # Print the map
     m
 elif selection == "pm10":
     # Filter data for PM10
     data_pm10 = df[["latitude", "longitude", "pm10_aqi"]].dropna()
-    folium.plugins.HeatMap(data_pm10, min_opacity=0.3, blur=15, gradient=gradient).add_to(m)
+    folium.plugins.HeatMap(data_pm10, min_opacity=0.1, blur=15, gradient=gradient).add_to(m)
      # Print the map
     m
 elif selection == "no2":
     # Filter data for NO2
     data_no2 = df[["latitude", "longitude", "no2_aqi"]].dropna()
-    folium.plugins.HeatMap(data_no2, min_opacity=0.3, blur=15, gradient=gradient).add_to(m)
+    folium.plugins.HeatMap(data_no2, min_opacity=0.1, blur=15, gradient=gradient).add_to(m)
      # Print the map
     m 
 
@@ -156,30 +188,47 @@ folium.LayerControl().add_to(m)
 # add legend to map
 
 
+
 # App layout
 app.layout = html.Div([
-    html.Div([
-        html.Div([
-            dcc.Dropdown(
-                id='indicator-dropdown',
-                options=pollutants_options,
-                value=pollutants[0]
-            )
-        ], style={'width': '48%', 'display': 'inline-block'}),
-    ]),
-
-    dcc.Graph(id='indicator-graphic'),
-
+    
+    #Filter Tags
+    dbc.Row([
+        dbc.Col(html.Div("Pollutant:"),width=6),
+        dbc.Col(html.Div("From:"),width=6)
+    ], style={'background-color': 'lightgray', 'padding': '2px', 'border-radius': '5px'}),
+    #Dropdown filters
     dbc.Row([
         dbc.Col(
-            html.Img(id='bar-graph-matplotlib'),
-            style={'padding': '50px'},
-            width=16),
-
+            html.Div([
+                dcc.Dropdown(
+                    id='indicator-dropdown',
+                    options=pollutants_options,
+                    value=pollutants[0]
+                )
+                
+            ])
+        ,width=6),
         dbc.Col(
-            html.Img(id='bar-graph-matplotlib_bottom'),
-            style={'padding': '50px'},
-            width=16),
+            html.Div([
+                dcc.Dropdown(
+                    id='indicator-dropdown2',
+                    options=pollutants_options,
+                    value=pollutants[0]
+                )
+                
+            ])
+        ,width=6)
+    ], style={'border': '1px solid black', 'padding': '10px', 'border-radius': '5px'}),
+
+    #Row with the plots
+    dbc.Row([
+        #left column with graphs
+        dbc.Col(dcc.Graph(id='indicator-graphic'),width=8),
+        #right column with bar plots
+        dbc.Col([
+            html.Img(id='bar-graph-matplotlib',style={'max-width': '100%', 'height': 'auto'}),
+            html.Img(id='bar-graph-matplotlib_bottom',style={'max-width': '100%', 'height': 'auto'})],width=4)
     ]),
 
     # Placeholder for displaying the Folium map
@@ -228,23 +277,6 @@ def update_graph(pollutant):
 
     df_pollutant_mean_year = pd.pivot_table(data=dff, index=indices, columns=columns, aggfunc='mean', values=pollutants)
 
-    #extract top 10 polluted cities (for now only most recent year = 2022)
-    dff_2022 = dff[dff.year == 2022]
-    #add log pollutant entry to dataframe
-    dff_2022[f'log_{pollutant}'] = np.log(dff_2022[pollutant])
-    #create complete list of pollutants including log pollutants
-    log_pollutants = ["pm25_aqi", "pm10_aqi", "no2_aqi", f'log_{pollutant}']
-    mean_city_2022 = pd.pivot_table(data=dff_2022, index=['city'], aggfunc='mean', values=log_pollutants)
-    top_ranked_10 = mean_city_2022.sort_values(by=pollutant, ascending=False)[0:10]
-    #reverse order for horizontal barplot
-    top_ranked_10 = top_ranked_10.sort_values(by=pollutant)
-    
-    
-    #extract 10 least polluted cities (for now only most recent year)
-    bottom_ranked_10 = mean_city_2022.sort_values(by=pollutant, ascending=True)[0:10]
-    #reverse order for horizontal barplot
-    bottom_ranked_10 = bottom_ranked_10.sort_values(by=pollutant, ascending=False)
-    
     # First graph plotting
     fig = go.Figure()
     table_for_plot = df_pollutant_mean_year[pollutant].T
@@ -265,66 +297,73 @@ def update_graph(pollutant):
         template = 'plotly_white'
     )
 
-     #build the top 10 ranking plot
-    color_palette_top_10 = [
-    "#FFFF00", "#FFEA00", "#FFD400", "#FFBF00", "#FFAA00",
-    "#FF9500", "#FF8000", "#FF6A00", "#FF5500", "#FF4000"]
-    fig_top_10 = plt.figure(figsize=(10, 5), constrained_layout=True)
-    #define xlim as max value of top ranked log pollutant
-    xlim = np.ceil(np.max(top_ranked_10[f'log_{pollutant}'].values))
-    #create horizontal barplot
-    plt.barh(top_ranked_10[f'log_{pollutant}'].index, top_ranked_10[f'log_{pollutant}'].values, color=color_palette_top_10)
-    plt.xlabel(f'Log {legends[pollutant]}')
-    plt.title(('Top 10 most polluted cities in 2022 (average values are shown; low value is better)\n'
-               'NON-transformed numbers are shown in plot'))    
-    plt.xlim([0,xlim])
-    plt.gca().spines['top'].set_visible(False) 
-    plt.gca().spines['right'].set_visible(False) 
-    #add the non transformed values to the plot as text
-    s = top_ranked_10[pollutant].values
-    x = top_ranked_10[f'log_{pollutant}'].values
-    for i in range(len(x)):
-        plt.text(x=(x[i]+0.1), y=i, s=round(s[i], 2), va='baseline')
-        
-    # Save figure to a temporary buffer.
-    buf = BytesIO()
-    fig_top_10.savefig(buf, format="png")
-    # Embed the result in the html output.
-    fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
-    fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'#
+    ############### build the top 10 ranking plot ##################
+    #extract top 10 polluted cities (for now only most recent year = 2022)
+    dff_2022 = dff[dff.year == 2022]
+    #add log pollutant entry to dataframe
+    dff_2022[f'log_{pollutant}'] = np.log(dff_2022[pollutant])
+    #create complete list of pollutants including log pollutants
+    log_pollutants = ["pm25_aqi", "pm10_aqi", "no2_aqi", f'log_{pollutant}']
+    mean_city_2022 = pd.pivot_table(data=dff_2022, index=['city'], aggfunc='mean', values=log_pollutants)
+    top_ranked_10 = mean_city_2022.sort_values(by=pollutant, ascending=False)[0:10]
+    #reverse order for horizontal barplot
+    top_ranked_10 = top_ranked_10.sort_values(by=pollutant)
+
+    #get top 10 aqi values for current pollutant
+    top_10_aqi= top_ranked_10[pollutant].values
     
+    top_10_aqi_colors = []
+    top_10_aqi_category = []
+    #get the corresponding color palette and category to the aqi values
+    for number in top_10_aqi:
+        category, color = assign_aqi_message(number)
+        top_10_aqi_colors.append(color)
+        top_10_aqi_category.append(category)
+    
+    #define the parameters for the ranking plot plot
+    x = top_ranked_10[f'log_{pollutant}'].index
+    y = top_ranked_10[f'log_{pollutant}'].values
+    title = ('Top 10 most polluted cities in 2022 (average values are shown; low value is better)\n'
+             'NON-transformed numbers are shown in plot')
+    xlim = [0, np.ceil(np.max(top_ranked_10[f'log_{pollutant}'].values))]
+    #display non transformed numbers on plot as text
+    text = top_ranked_10[pollutant].values
+    xlabel = f'Log {legends[pollutant]}'
+    #create a custom horizontal barplot
+    fig_bar_matplotlib = create_ranking_plot(x=x, y=y, color= top_10_aqi_colors, title=title, xlim=xlim, 
+                                             xlabel=xlabel, text=text)
+   
+
     #build bottom 10 ranking plot
-    color_palette_bottom_10 = [
-    "#e6ff66", "#ccff33", "#b3ff00", "#99e600", "#80cc00", 
-    "#66b300", "#4d9900","#338000", "#1a6600", "#004d00"]
-    #build horizontal barplot
-    fig_bottom_10 = plt.figure(figsize=(10, 5), constrained_layout=True)
-    #create horizontal barplot
-    plt.barh(bottom_ranked_10[f'log_{pollutant}'].index, bottom_ranked_10[f'log_{pollutant}'].values, 
-             color=color_palette_bottom_10)
-    plt.xlabel(f'Log {legends[pollutant]}')
-    plt.title(('Top 10 least polluted cities in 2022 (average values are shown; low value is better)\n'
-               'NON-transformed numbers are shown in plot'))
-    plt.xlim([0,xlim])
-    plt.gca().spines['top'].set_visible(False) 
-    plt.gca().spines['right'].set_visible(False) 
+    #extract 10 least polluted cities (for now only most recent year)
+    bottom_ranked_10 = mean_city_2022.sort_values(by=pollutant, ascending=True)[0:10]
+    #reverse order for horizontal barplot
+    bottom_ranked_10 = bottom_ranked_10.sort_values(by=pollutant, ascending=False)
 
-    #add the non transformed values to the plot as text
-    s = bottom_ranked_10[pollutant].values
-    x = bottom_ranked_10[f'log_{pollutant}'].values
-    for i in range(len(x)):
-        plt.text(x=(x[i]+0.1), y=i, s=round(s[i], 2), va='baseline')
-    
+    #get bottom 10 aqi values for current pollutant
+    bottom_10_aqi= bottom_ranked_10[pollutant].values
+    bottom_10_aqi_colors = []
+    bottom_10_aqi_category = []
 
-    # Save figure to a temporary buffer.
-    buf = BytesIO()
-    fig_bottom_10.savefig(buf, format="png")
-    # Embed the result in the html output.
-    fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
-    fig_bar_matplotlib_bottom = f'data:image/png;base64,{fig_data}'
-    
+    #get the corresponding color palette and category to the aqi values
+    for number in bottom_10_aqi:
+        category, color = assign_aqi_message(number)
+        bottom_10_aqi_colors.append(color)
+        bottom_10_aqi_category.append(category)   
+
+    #define parameters for ranking plot
+    x = bottom_ranked_10[f'log_{pollutant}'].index
+    y = bottom_ranked_10[f'log_{pollutant}'].values
+    title = ('Top 10 least polluted cities in 2022 (average values are shown; low value is better)\n'
+             'NON-transformed numbers are shown in plot')
+    text = bottom_ranked_10[pollutant].values
+    xlabel = f'Log {legends[pollutant]}'
+    #create a custom horizontal barplot
+    fig_bar_matplotlib_bottom = create_ranking_plot(x=x, y=y, color= bottom_10_aqi_colors, title=title, xlim=xlim, 
+                                             xlabel=xlabel, text=text)
+   
     return fig, fig_bar_matplotlib, fig_bar_matplotlib_bottom
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False, port=8002)
+    app.run_server(debug=True, port=8002)
