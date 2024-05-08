@@ -19,8 +19,12 @@ os.getcwd()
 #directory = "C:\inspectair\Group_01_Inspectair"
 #os.chdir(directory)
 
+
+# define bootsrap stylesheet
+external_stylesheets = [dbc.themes.BOOTSTRAP]
+
 # https://dash.plotly.com/basic-callbacks
-app = Dash(__name__)
+app = Dash(__name__,external_stylesheets=external_stylesheets)
 
 # Import data
 df = pd.read_excel("who_ambient_air_quality_database_version_2024_(v6.1).xlsx", sheet_name="Update 2024 (V6.1)")
@@ -134,7 +138,7 @@ def update_map(selection):
     return m._repr_html_()
 
 # Select a pollutant type
-selection = input("Please choose a pollutant type (pm25, pm10, no2): ").lower().strip()
+selection = "pm25"
 
 # Check if the selection is valid
 while selection not in ["pm25", "pm10", "no2"]:
@@ -158,19 +162,19 @@ gradient = {
 if selection == "pm25":
     # Filter data for PM2.5
     data_pm25 = df[["latitude", "longitude", "pm25_aqi"]].dropna()
-    folium.plugins.HeatMap(data_pm25, min_opacity=0.3, blur=15, gradient=gradient).add_to(m)
+    folium.plugins.HeatMap(data_pm25, min_opacity=0.1, blur=15, gradient=gradient).add_to(m)
     # Print the map
     m
 elif selection == "pm10":
     # Filter data for PM10
     data_pm10 = df[["latitude", "longitude", "pm10_aqi"]].dropna()
-    folium.plugins.HeatMap(data_pm10, min_opacity=0.3, blur=15, gradient=gradient).add_to(m)
+    folium.plugins.HeatMap(data_pm10, min_opacity=0.1, blur=15, gradient=gradient).add_to(m)
      # Print the map
     m
 elif selection == "no2":
     # Filter data for NO2
     data_no2 = df[["latitude", "longitude", "no2_aqi"]].dropna()
-    folium.plugins.HeatMap(data_no2, min_opacity=0.3, blur=15, gradient=gradient).add_to(m)
+    folium.plugins.HeatMap(data_no2, min_opacity=0.1, blur=15, gradient=gradient).add_to(m)
      # Print the map
     m 
 
@@ -190,30 +194,48 @@ folium.LayerControl().add_to(m)
 
 # add legend to map
 
+
+
 # App layout
 app.layout = html.Div([
-    html.Div([
-        html.Div([
-            dcc.Dropdown(
-                id='indicator-dropdown',
-                options=pollutants_options,
-                value=pollutants[0]
-            )
-        ], style={'width': '48%', 'display': 'inline-block'}),
-    ]),
-
-    dcc.Graph(id='indicator-graphic'),
-
+    
+    #Filter Tags
+    dbc.Row([
+        dbc.Col(html.Div("Pollutant:"),width=6),
+        dbc.Col(html.Div("From:"),width=6)
+    ], style={'background-color': 'lightgray', 'padding': '2px', 'border-radius': '5px'}),
+    #Dropdown filters
     dbc.Row([
         dbc.Col(
-            html.Img(id='bar-graph-matplotlib'),
-            style={'padding': '50px'},
-            width=16),
-
+            html.Div([
+                dcc.Dropdown(
+                    id='indicator-dropdown',
+                    options=pollutants_options,
+                    value=pollutants[0]
+                )
+                
+            ])
+        ,width=6),
         dbc.Col(
-            html.Img(id='bar-graph-matplotlib_bottom'),
-            style={'padding': '50px'},
-            width=16),
+            html.Div([
+                dcc.Dropdown(
+                    id='indicator-dropdown2',
+                    options=pollutants_options,
+                    value=pollutants[0]
+                )
+                
+            ])
+        ,width=6)
+    ], style={'border': '1px solid black', 'padding': '10px', 'border-radius': '5px'}),
+
+    #Row with the plots
+    dbc.Row([
+        #left column with graphs
+        dbc.Col(dcc.Graph(id='indicator-graphic'),width=8),
+        #right column with bar plots
+        dbc.Col([
+            html.Img(id='bar-graph-matplotlib',style={'max-width': '100%', 'height': 'auto'}),
+            html.Img(id='bar-graph-matplotlib_bottom',style={'max-width': '100%', 'height': 'auto'})],width=4)
     ]),
 
     # Placeholder for displaying the Folium map
@@ -351,4 +373,4 @@ def update_graph(pollutant):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False, port=8002)
+    app.run_server(debug=True, port=8002)
