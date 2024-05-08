@@ -149,14 +149,7 @@ elif selection == "no2":
 
 # control layers 
 folium.TileLayer("OpenStreetMap").add_to(m)
-# Add the heatmap tile layer
-heatmap_tiles = 'https://your-heatmap-tiles-url.com/{z}/{x}/{y}.png'
-heatmap_layer = folium.TileLayer(
-    tiles=heatmap_tiles,
-    attr='Your attribution here',  # Add appropriate attribution
-    name='Heatmap'  # Specify the name for the layer control
-)
-heatmap_layer.add_to(m)
+folium.TileLayer(show=False).add_to(m)
 
 folium.LayerControl().add_to(m)
 
