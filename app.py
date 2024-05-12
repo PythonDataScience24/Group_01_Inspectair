@@ -192,9 +192,8 @@ def update_graph(selected_pollutant, selected_continent, selected_from_year, sel
             }],
             template='plotly_white'
         )
-        return fig, fig_bar_top_10, fig_bar_bottom_10
+        return (fig, None, None)
         
-    ####################
     ## Data filtering ##
     ####################
     #selected_station_types = ['Residential - industrial', 'Industrial']
@@ -244,15 +243,19 @@ def update_graph(selected_pollutant, selected_continent, selected_from_year, sel
 
         #get top 10 (worst and best) polluted cities in filtered df
         top_ranked_10, bottom_ranked_10 = get_rank_10(df=filtered_df, selected_pollutant=selected_pollutant)
+        
         #create the ranking plots
         fig_bar_top_10 = create_ranking_plot(
             x = top_ranked_10[selected_pollutant].index,
-            y=top_ranked_10[selected_pollutant].values)
+            y = top_ranked_10[selected_pollutant].values, 
+            title = (f'Top 10 most polluted cities in {continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
+                     '(average values across timeframe are shown; low value is better)'))
     
         fig_bar_bottom_10 = create_ranking_plot(
             x=bottom_ranked_10[selected_pollutant].index,
-            y=bottom_ranked_10[selected_pollutant].values)
-        
+            y=bottom_ranked_10[selected_pollutant].values,
+            title = (f'Top 10 least polluted cities in {continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
+                     '(average values across timeframe are shown; low value is better)'))
         return fig, fig_bar_top_10, fig_bar_bottom_10
 
     else:
@@ -288,11 +291,15 @@ def update_graph(selected_pollutant, selected_continent, selected_from_year, sel
         #create the ranking plots
         fig_bar_top_10 = create_ranking_plot(
             x = top_ranked_10[selected_pollutant].index,
-            y=top_ranked_10[selected_pollutant].values)
+            y = top_ranked_10[selected_pollutant].values, 
+            title = (f'Top 10 most polluted cities in {continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
+                     '(average values across timeframe are shown; low value is better)'))
     
         fig_bar_bottom_10 = create_ranking_plot(
             x=bottom_ranked_10[selected_pollutant].index,
-            y=bottom_ranked_10[selected_pollutant].values)
+            y=bottom_ranked_10[selected_pollutant].values,
+            title = (f'Top 10 least polluted cities in {continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
+                     '(average values across timeframe are shown; low value is better)'))
 
         return fig, fig_bar_top_10, fig_bar_bottom_10
 
