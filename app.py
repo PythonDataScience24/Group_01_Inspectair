@@ -150,7 +150,7 @@ app.layout = html.Div([
         #right column with bar plots
         dbc.Col([
             html.Img(id='bar-graph-matplotlib',style={'max-width': '100%', 'height': 'auto'}),
-            html.Img(id='bar-graph-matplotlib_bottom',style={'max-width': '100%', 'height': 'auto'})],width=4)
+            html.Img(id='bar-graph-matplotlib_bottom',style={'max-width': '100%', 'height': 'auto'})],width=4), 
     ]),
 
     # Placeholder for displaying the Folium map
@@ -242,20 +242,25 @@ def update_graph(selected_pollutant, selected_continent, selected_from_year, sel
         )
 
         #get top 10 (worst and best) polluted cities in filtered df
-        top_ranked_10, bottom_ranked_10 = get_rank_10(df=filtered_df, selected_pollutant=selected_pollutant)
-        
-        #create the ranking plots
+        top_ranked_10, bottom_ranked_10, color_top, color_bottom = get_rank_10(df=filtered_df, 
+                                                              selected_pollutant=selected_pollutant, 
+                                                              selected_data_type=selected_data_type)
+        #create top 10 barplot
         fig_bar_top_10 = create_ranking_plot(
             x = top_ranked_10[selected_pollutant].index,
             y = top_ranked_10[selected_pollutant].values, 
             title = (f'Top 10 most polluted cities in {continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
-                     '(average values across timeframe are shown; low value is better)'))
-    
+                     '(average values across timeframe are shown; low value is better)'),
+        xlabel = f'{legend[selected_pollutant]}',
+        color = color_top)
+        #create bottom 10 bar plot
         fig_bar_bottom_10 = create_ranking_plot(
-            x=bottom_ranked_10[selected_pollutant].index,
-            y=bottom_ranked_10[selected_pollutant].values,
+            x = bottom_ranked_10[selected_pollutant].index,
+            y = bottom_ranked_10[selected_pollutant].values,
             title = (f'Top 10 least polluted cities in {continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
-                     '(average values across timeframe are shown; low value is better)'))
+                     '(average values across timeframe are shown; low value is better)'),
+            xlabel = f'{legend[selected_pollutant]}', 
+            color=color_bottom)
         return fig, fig_bar_top_10, fig_bar_bottom_10
 
     else:
@@ -287,19 +292,25 @@ def update_graph(selected_pollutant, selected_continent, selected_from_year, sel
         )
 
         #get top 10 (worst and best) polluted cities in filtered df
-        top_ranked_10, bottom_ranked_10 = get_rank_10(df=filtered_df, selected_pollutant=selected_pollutant)
+        top_ranked_10, bottom_ranked_10, color_top, color_bottom = get_rank_10(df=filtered_df, 
+                                                              selected_pollutant=selected_pollutant, 
+                                                              selected_data_type=selected_data_type)
         #create the ranking plots
         fig_bar_top_10 = create_ranking_plot(
             x = top_ranked_10[selected_pollutant].index,
             y = top_ranked_10[selected_pollutant].values, 
             title = (f'Top 10 most polluted cities in {continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
-                     '(average values across timeframe are shown; low value is better)'))
+                     '(average values across timeframe are shown; low value is better)'),
+            xlabel = f'{legend[selected_pollutant]}',
+            color=color_top)
     
         fig_bar_bottom_10 = create_ranking_plot(
             x=bottom_ranked_10[selected_pollutant].index,
             y=bottom_ranked_10[selected_pollutant].values,
             title = (f'Top 10 least polluted cities in {continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
-                     '(average values across timeframe are shown; low value is better)'))
+                     '(average values across timeframe are shown; low value is better)'),
+            xlabel = f'{legend[selected_pollutant]}',
+            color=color_bottom)
 
         return fig, fig_bar_top_10, fig_bar_bottom_10
 
