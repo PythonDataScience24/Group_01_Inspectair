@@ -1,11 +1,15 @@
 from dash import Dash, html, dcc, Input, Output, callback 
 import sys
 sys.path.append('C:\\inspectair\\Group_01_Inspectair')
+from ranking_plots import *
 from datahandling import *
+import dash_bootstrap_components as dbc  
 import pandas as pd   
 import plotly.graph_objects as go
 import matplotlib
 matplotlib.use('agg')
+import folium
+import folium.plugins
 import os
 import numpy as np
 import re
@@ -139,12 +143,27 @@ app.layout = html.Div([
         )
     ], style={'margin-top': '10px', 'margin-bottom': '10px'}),
 
-    dcc.Graph(id='indicator-graphic')
+    #Row with the plots
+    dbc.Row([
+        #left column with graphs
+        dbc.Col(dcc.Graph(id='indicator-graphic'),width=8),
+        #right column with bar plots
+        dbc.Col([
+            html.Img(id='bar-graph-matplotlib',style={'max-width': '100%', 'height': 'auto'}),
+            html.Img(id='bar-graph-matplotlib_bottom',style={'max-width': '100%', 'height': 'auto'})],width=4)
+    ]),
+
+    # Placeholder for displaying the Folium map
+    #html.Div([
+    #    html.Iframe(id='map', srcDoc=m._repr_html_(), width='100%', height='500')
+    #])
 ])
 
 # Callback to update the graph based on dropdown selections
 @callback(
     Output('indicator-graphic', 'figure'),
+    Output('bar-graph-matplotlib', 'src'),
+    Output('bar-graph-matplotlib_bottom', 'src'),
         Input('pollutant-dropdown', 'value'),
         Input('continent-dropdown', 'value'),
         Input('from-dropdown', 'value'),
@@ -173,7 +192,7 @@ def update_graph(selected_pollutant, selected_continent, selected_from_year, sel
             }],
             template='plotly_white'
         )
-        return fig
+        return fig, fig_bar_top_10, fig_bar_bottom_10
         
     ####################
     ## Data filtering ##
@@ -204,7 +223,6 @@ def update_graph(selected_pollutant, selected_continent, selected_from_year, sel
     fig = go.Figure()
 
     if selected_continent == '':
-
         regions = filtered_df['who_region'].unique()
         for region in regions:
             regional_data = filtered_df[filtered_df['who_region'] == region]
@@ -224,9 +242,21 @@ def update_graph(selected_pollutant, selected_continent, selected_from_year, sel
             template = 'plotly_white'
         )
 
+        #get top 10 (worst and best) polluted cities in filtered df
+        top_ranked_10, bottom_ranked_10 = get_rank_10(df=filtered_df, selected_pollutant=selected_pollutant)
+        #create the ranking plots
+        fig_bar_top_10 = create_ranking_plot(
+            x = top_ranked_10[selected_pollutant].index,
+            y=top_ranked_10[selected_pollutant].values)
+    
+        fig_bar_bottom_10 = create_ranking_plot(
+            x=bottom_ranked_10[selected_pollutant].index,
+            y=bottom_ranked_10[selected_pollutant].values)
+        
+        return fig, fig_bar_top_10, fig_bar_bottom_10
+
     else:
         filtered_df = filtered_df[filtered_df['who_region'] == selected_continent]
-
         # drop column without data to prevent error in plot
         filtered_df = filtered_df.dropna(subset=[selected_pollutant])
         
@@ -244,15 +274,28 @@ def update_graph(selected_pollutant, selected_continent, selected_from_year, sel
                     name = country,
                     line = dict(color=colors[countries.tolist().index(country) % len(colors)])
                 ))
+
         fig.update_layout(
             title = legend[selected_pollutant] + ' Concentration Across Different Countries in' + continent_dict[selected_continent],
             xaxis_title = 'Year',
             yaxis_title = legend[selected_pollutant],
             legend_title = 'country',
             template = 'plotly_white'
-        )        
-        return fig
-    return fig
+        )
+
+        #get top 10 (worst and best) polluted cities in filtered df
+        top_ranked_10, bottom_ranked_10 = get_rank_10(df=filtered_df, selected_pollutant=selected_pollutant)
+        #create the ranking plots
+        fig_bar_top_10 = create_ranking_plot(
+            x = top_ranked_10[selected_pollutant].index,
+            y=top_ranked_10[selected_pollutant].values)
+    
+        fig_bar_bottom_10 = create_ranking_plot(
+            x=bottom_ranked_10[selected_pollutant].index,
+            y=bottom_ranked_10[selected_pollutant].values)
+
+        return fig, fig_bar_top_10, fig_bar_bottom_10
+
 
 # Run the server
 if __name__ == '__main__':
