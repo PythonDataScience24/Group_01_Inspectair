@@ -15,6 +15,7 @@ import numpy as np
 import re
 
 os.getcwd()
+#directory = r'C:\Users\julia\Documents\GitHub\Group_01_Inspectair'
 directory = 'C:\\inspectair\\Group_01_Inspectair'
 os.chdir(directory)
 
@@ -247,20 +248,23 @@ def update_graph(selected_pollutant, selected_continent, selected_from_year, sel
                                                               selected_data_type=selected_data_type)
         #create top 10 barplot
         fig_bar_top_10 = create_ranking_plot(
+            selected_data_type=selected_data_type,
             x = top_ranked_10[selected_pollutant].index,
             y = top_ranked_10[selected_pollutant].values, 
             title = (f'Top 10 most polluted cities in {continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
                      '(average values across timeframe are shown; low value is better)'),
-        xlabel = f'{legend[selected_pollutant]}',
-        color = color_top)
+            xlabel = f'{legend[selected_pollutant]}',
+            color = color_top)
         #create bottom 10 bar plot
         fig_bar_bottom_10 = create_ranking_plot(
+            selected_data_type=selected_data_type,
             x = bottom_ranked_10[selected_pollutant].index,
             y = bottom_ranked_10[selected_pollutant].values,
             title = (f'Top 10 least polluted cities in {continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
                      '(average values across timeframe are shown; low value is better)'),
             xlabel = f'{legend[selected_pollutant]}', 
             color=color_bottom)
+       
         return fig, fig_bar_top_10, fig_bar_bottom_10
 
     else:
@@ -297,6 +301,7 @@ def update_graph(selected_pollutant, selected_continent, selected_from_year, sel
                                                               selected_data_type=selected_data_type)
         #create the ranking plots
         fig_bar_top_10 = create_ranking_plot(
+            selected_data_type=selected_data_type,
             x = top_ranked_10[selected_pollutant].index,
             y = top_ranked_10[selected_pollutant].values, 
             title = (f'Top 10 most polluted cities in {continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
@@ -305,6 +310,7 @@ def update_graph(selected_pollutant, selected_continent, selected_from_year, sel
             color=color_top)
     
         fig_bar_bottom_10 = create_ranking_plot(
+            selected_data_type=selected_data_type,
             x=bottom_ranked_10[selected_pollutant].index,
             y=bottom_ranked_10[selected_pollutant].values,
             title = (f'Top 10 least polluted cities in {continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'

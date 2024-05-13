@@ -1,4 +1,5 @@
 import base64
+import numpy as np
 import pandas as pd
 from datahandling import *
 from io import BytesIO
@@ -26,7 +27,7 @@ def get_rank_10(df, selected_pollutant, selected_data_type):
          color_bottom = '#3a77a5'
     return top_ranked_10, bottom_ranked_10, color_top, color_bottom
 
-def create_ranking_plot(x, y, xlim=None, text=None, xlabel=None, color=None, title=None):
+def create_ranking_plot(selected_data_type, x, y, xlim=None, text=None, xlabel=None, color=None, title=None):
     #function creates matplotlib ranking plot (horizontal barplot), 
     #saves it to temporary buffer and embeds the result into html
 
@@ -38,7 +39,14 @@ def create_ranking_plot(x, y, xlim=None, text=None, xlabel=None, color=None, tit
     plt.xlim(xlim)
     plt.gca().spines['top'].set_visible(False) 
     plt.gca().spines['right'].set_visible(False) 
+    
 
+    if str(selected_data_type)=='AQI':
+        legend_labels = {'good': 'green', 'moderate': 'yellow', 'unhealthy to sens. groups': 'orange',
+                         'unhealthy': 'orange', 'very unhealthy': 'purple', 'hazardous': 'maroon'}
+        legend_handles = [plt.Line2D([0], [0], color=color, linewidth=3, linestyle='-') for label, color in legend_labels.items()]
+        plt.legend(legend_handles, legend_labels.keys(), title='AQI color scheme')
+        plt.xlim([0,500])
     #add the non transformed values to the plot as text
     #for i in range(len(x)):
     #   plt.text(x=(y[i]+0.1), y=i, s=round(text[i], 2), va='baseline')
