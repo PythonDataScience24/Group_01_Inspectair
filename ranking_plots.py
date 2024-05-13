@@ -40,6 +40,8 @@ def create_ranking_plot(selected_data_type, x, y, xlim=None, text=None, xlabel=N
     plt.gca().spines['top'].set_visible(False) 
     plt.gca().spines['right'].set_visible(False) 
     
+    for i in range(len(x)):
+       plt.text(x=(y[i]), y=i, s=round(text[i], 2), va = 'baseline')
 
     if str(selected_data_type)=='AQI':
         legend_labels = {'good': 'green', 'moderate': 'yellow', 'unhealthy to sens. groups': 'orange',
@@ -47,10 +49,7 @@ def create_ranking_plot(selected_data_type, x, y, xlim=None, text=None, xlabel=N
         legend_handles = [plt.Line2D([0], [0], color=color, linewidth=3, linestyle='-') for label, color in legend_labels.items()]
         plt.legend(legend_handles, legend_labels.keys(), title='AQI color scheme')
         plt.xlim([0,500])
-    #add the non transformed values to the plot as text
-    #for i in range(len(x)):
-    #   plt.text(x=(y[i]+0.1), y=i, s=round(text[i], 2), va='baseline')
-
+    
     #save the plot to temporary buffer
     buf = BytesIO()
     fig.savefig(buf, format="png")
