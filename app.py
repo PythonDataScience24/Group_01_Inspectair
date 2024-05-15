@@ -8,10 +8,16 @@ matplotlib.use('agg')
 import os
 import numpy as np
 import re
+
+os.getcwd()
+directory = "C:\inspectair\Group_01_Inspectair"
+os.chdir(directory)
+
 from ranking_plots import *
 from datahandling import *
 
-class AirQualityDashboard:
+
+class AirQualityData:
     def __init__(self, data_path, sheet_name="Update 2024 (V6.1)"):
         self.df = pd.read_excel(data_path, sheet_name=sheet_name)
         self.df["pm25_aqi"] = pd.DataFrame(calculate_aqi("pm25", (self.df["pm25_concentration"]).to_numpy()))
@@ -70,10 +76,12 @@ class AirQualityDashboard:
         all_years = np.append(all_years, 'all')
         self.years_options = [{'label': name, 'value': name} for name in all_years]
 
-        external_stylesheets = [dbc.themes.BOOTSTRAP]
-        self.app = Dash(__name__, external_stylesheets=external_stylesheets)
+
+class AirQualityLayout:
+    def __init__(self, app, data):
+        self.app = app
+        self.data = data
         self.set_layout()
-        self.set_callbacks()
 
     def set_layout(self):
         self.app.layout = html.Div([
@@ -83,7 +91,7 @@ class AirQualityDashboard:
                         html.Label('Pollutant:', style={'font-weight': 'bold'}),
                         dcc.Dropdown(
                             id='pollutant-dropdown',
-                            options=self.pollutants_options,
+                            options=self.data.pollutants_options,
                             value='pm25_concentration'
                         )
                     ], style={'margin-top': '10px'}),
@@ -95,8 +103,8 @@ class AirQualityDashboard:
                         html.Label('Region:', style={'font-weight': 'bold'}),
                         dcc.Dropdown(
                             id='continent-dropdown',
-                            options=self.continents_options,
-                            value=list(self.continent_dict.keys())[0]
+                            options=self.data.continents_options,
+                            value=list(self.data.continent_dict.keys())[0]
                         )
                     ], style={'margin-top': '10px'}),
                     width=5
@@ -124,7 +132,7 @@ class AirQualityDashboard:
                         html.Label('Station type(s):', style={'font-weight': 'bold'}),
                         dcc.Checklist(
                             id='station-type-checklist',
-                            options=[{'label': key, 'value': key} for key in self.station_type.keys()],
+                            options=[{'label': key, 'value': key} for key in self.data.station_type.keys()],
                             value=['all'],
                             inline=True
                         )
@@ -157,6 +165,13 @@ class AirQualityDashboard:
             ]),
         ])
 
+
+class AirQualityCallbacks:
+    def __init__(self, app, data):
+        self.app = app
+        self.data = data
+        self.set_callbacks()
+
     def set_callbacks(self):
         @self.app.callback(
             Output('indicator-graphic', 'figure'),
@@ -172,7 +187,7 @@ class AirQualityDashboard:
             selected_from_year = selected_year[0]
             selected_to_year = selected_year[1]
             colors = ['brown', 'red', 'purple', 'pink', 'green', 'black', 'blue']
-            filtered_df = self.df.copy()
+            filtered_df = self.data.df.copy()
 
             if not selected_station_types:
                 fig = go.Figure()
@@ -215,13 +230,13 @@ class AirQualityDashboard:
                         x=df_pollutant_mean_year.index,
                         y=df_pollutant_mean_year[selected_pollutant],
                         mode='lines',
-                        name=self.continent_dict[region],
+                        name=self.data.continent_dict[region],
                         line=dict(color=colors[regions.tolist().index(region) % len(colors)])
                     ))
                 fig.update_layout(
-                    title=self.legend[selected_pollutant] + ' Across Different Continents',
+                    title=self.data.legend[selected_pollutant] + ' Across Different Continents',
                     xaxis_title='Year',
-                    yaxis_title=self.legend[selected_pollutant],
+                    yaxis_title=self.data.legend[selected_pollutant],
                     legend_title='Region',
                     template='plotly_white'
                 )
@@ -233,9 +248,9 @@ class AirQualityDashboard:
                     selected_data_type=selected_data_type,
                     x=top_ranked_10[selected_pollutant].index,
                     y=top_ranked_10[selected_pollutant].values,
-                    title=(f'Top 10 most polluted cities in {self.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
+                    title=(f'Top 10 most polluted cities in {self.data.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
                            '(average values across timeframe are shown; low value is better)'),
-                    xlabel=f'{self.legend[selected_pollutant]}',
+                    xlabel=f'{self.data.legend[selected_pollutant]}',
                     color=color_top,
                     text=top_ranked_10[selected_pollutant].values)
 
@@ -243,9 +258,9 @@ class AirQualityDashboard:
                     selected_data_type=selected_data_type,
                     x=bottom_ranked_10[selected_pollutant].index,
                     y=bottom_ranked_10[selected_pollutant].values,
-                    title=(f'Top 10 least polluted cities in {self.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
+                    title=(f'Top 10 least polluted cities in {self.data.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
                            '(average values across timeframe are shown; low value is better)'),
-                    xlabel=f'{self.legend[selected_pollutant]}',
+                    xlabel=f'{self.data.legend[selected_pollutant]}',
                     color=color_bottom,
                     text=bottom_ranked_10[selected_pollutant].values)
 
@@ -270,9 +285,9 @@ class AirQualityDashboard:
                         ))
 
                 fig.update_layout(
-                    title=self.legend[selected_pollutant] + ' Concentration Across Different Countries in ' + self.continent_dict[selected_continent],
+                    title=self.data.legend[selected_pollutant] + ' Concentration Across Different Countries in ' + self.data.continent_dict[selected_continent],
                     xaxis_title='Year',
-                    yaxis_title=self.legend[selected_pollutant],
+                    yaxis_title=self.data.legend[selected_pollutant],
                     legend_title='Country',
                     template='plotly_white'
                 )
@@ -284,9 +299,9 @@ class AirQualityDashboard:
                     selected_data_type=selected_data_type,
                     x=top_ranked_10[selected_pollutant].index,
                     y=top_ranked_10[selected_pollutant].values,
-                    title=(f'Top 10 most polluted cities in {self.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
+                    title=(f'Top 10 most polluted cities in {self.data.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
                            '(average values across timeframe are shown; low value is better)'),
-                    xlabel=f'{self.legend[selected_pollutant]}',
+                    xlabel=f'{self.data.legend[selected_pollutant]}',
                     color=color_top,
                     text=top_ranked_10[selected_pollutant].values)
 
@@ -294,16 +309,25 @@ class AirQualityDashboard:
                     selected_data_type=selected_data_type,
                     x=bottom_ranked_10[selected_pollutant].index,
                     y=bottom_ranked_10[selected_pollutant].values,
-                    title=(f'Top 10 least polluted cities in {self.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
+                    title=(f'Top 10 least polluted cities in {self.data.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
                            '(average values across timeframe are shown; low value is better)'),
-                    xlabel=f'{self.legend[selected_pollutant]}',
+                    xlabel=f'{self.data.legend[selected_pollutant]}',
                     color=color_bottom,
                     text=bottom_ranked_10[selected_pollutant].values)
 
                 return fig, fig_bar_top_10, fig_bar_bottom_10
 
+
+class AirQualityDashboard:
+    def __init__(self, data_path, sheet_name="Update 2024 (V6.1)"):
+        self.data = AirQualityData(data_path, sheet_name)
+        self.app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+        self.layout = AirQualityLayout(self.app, self.data)
+        self.callbacks = AirQualityCallbacks(self.app, self.data)
+
     def run_server(self):
         self.app.run_server(debug=False, port=8002)
+
 
 if __name__ == '__main__':
     data_path = os.path.join("who_ambient_air_quality_database_version_2024_(v6.1).xlsx")
