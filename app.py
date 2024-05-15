@@ -1,6 +1,6 @@
 from dash import Dash, html, dcc, Input, Output, callback 
 import sys
-sys.path.append('C:\\inspectair\\Group_01_Inspectair')
+#sys.path.append('C:\\inspectair\\Group_01_Inspectair')
 from ranking_plots import *
 from datahandling import *
 import dash_bootstrap_components as dbc  
@@ -16,8 +16,8 @@ import re
 
 os.getcwd()
 #directory = r'C:\Users\julia\Documents\GitHub\Group_01_Inspectair'
-directory = 'C:\\inspectair\\Group_01_Inspectair'
-os.chdir(directory)
+directory = ''
+#os.chdir(directory)
 
 # Load the data
 df = pd.read_excel(os.path.join(directory, "who_ambient_air_quality_database_version_2024_(v6.1).xlsx"), sheet_name="Update 2024 (V6.1)")
@@ -81,69 +81,88 @@ all_years = np.array(((df["year"].dropna().unique()).astype(int)), dtype=str)
 all_years = np.append(all_years, 'all')
 years_options = [{'label': name, 'value': name} for name in all_years]
 
+# define bootsrap stylesheet
+external_stylesheets = [dbc.themes.BOOTSTRAP]
+
 # Initialize app and layout
-app = Dash(__name__)
+app = Dash(__name__,external_stylesheets=external_stylesheets)
+
 
 app.layout = html.Div([
-    html.Div([
-        html.Label('Pollutant:', style={'font-weight': 'bold'}),
-        dcc.Dropdown(
-            id='pollutant-dropdown',
-            options=pollutants_options,
-            value='pm25_concentration'
-        )
-    ], style={'margin-top': '10px'}),
+    
+    dbc.Row([
+        dbc.Col(
+        html.Div([
+            html.Label('Pollutant:', style={'font-weight': 'bold'}),
+            dcc.Dropdown(
+                id='pollutant-dropdown',
+                options=pollutants_options,
+                value='pm25_concentration'
+            )
+        ], style={'margin-top': '10px'}),
+        width=5,
+        style={'margin-left': '40px'}),
+
+        dbc.Col(
+        html.Div([
+            html.Label('Region:', style={'font-weight': 'bold'}),
+            dcc.Dropdown(
+                id='continent-dropdown',
+                options=continents_options,
+                value=list(continent_dict.keys())[0]  # Make sure keys are ordered if this is Python < 3.7
+            )
+        ], style={'margin-top': '10px'}),
+        width=5),
+    ], style={'background-color': '#d3d3d3', 
+              'border': '1px solid #ddd', 
+              'border-radius': '5px',
+              'box-shadow': '0 4px 8px rgba(0, 0, 0, 0.1)',
+              'padding-bottom': '20px'}),
 
     html.Div([
-        html.Label('Region:', style={'font-weight': 'bold'}),
-        dcc.Dropdown(
-            id='continent-dropdown',
-            options=continents_options,
-            value=list(continent_dict.keys())[0]  # Make sure keys are ordered if this is Python < 3.7
+        html.Label('Time Span:', style={'font-weight': 'bold','margin-left': '20px'}),
+        dcc.RangeSlider(
+            id='from-to',
+            min=2013,
+            max=2022,
+            value=[2015, 2020],
+            marks={i: str(i) for i in range(2013, 2023, 1)}
         )
-    ], style={'margin-top': '10px'}),
+    ], style={'margin-top': '10px', 'margin-bottom': '10px', 'margin-left': '20px', 'margin-right': '20px'}),
 
-    html.Div([
-        html.Label('From:', style={'font-weight': 'bold'}),
-        dcc.Dropdown(
-            id='from-dropdown',
-            options=years_options,
-            value='all'
-        )
-    ], style={'margin-top': '10px', 'margin-bottom': '10px'}),
 
-    html.Div([
-        html.Label('To:', style={'font-weight': 'bold'}),
-        dcc.Dropdown(
-            id='to-dropdown',
-            options=years_options,
-            value='all'
-        )
-    ], style={'margin-top': '10px', 'margin-bottom': '10px'}),
+    dbc.Row([
+        dbc.Col(
+        html.Div([
+            html.Label('Station type(s):', style={'font-weight': 'bold'}),
+            dcc.Checklist(
+                id='station-type-checklist',
+                options=[{'label': key, 'value': key} for key in station_type.keys()],
+                value=['all'],
+                inline=True
+            )
+        ], style={'margin-top': '10px', 'margin-bottom': '10px'}),
+        width=6,style={'margin-left': '40px'}),
 
-    html.Div([
-        html.Label('Station type(s):', style={'font-weight': 'bold'}),
-        dcc.Checklist(
-            id='station-type-checklist',
-            options=[{'label': key, 'value': key} for key in station_type.keys()],
-            value=['all'],
-            inline=True
-        )
-    ], style={'margin-top': '10px', 'margin-bottom': '10px'}),
+        dbc.Col(
+        html.Div([
+            html.Label('Data Type:', style={'font-weight': 'bold'}),
+            dcc.RadioItems(
+                id='data-type-radio',
+                options=[
+                    {'label': 'Concentration', 'value': 'Concentration'},
+                    {'label': 'AQI', 'value': 'AQI'}
+                ],
+                value='Concentration',
+                inline=True
+            )
+        ], style={'margin-top': '10px', 'margin-bottom': '10px'}),
+        width=4),
+    ]),
 
-    html.Div([
-        html.Label('Data Type:', style={'font-weight': 'bold'}),
-        dcc.RadioItems(
-            id='data-type-radio',
-            options=[
-                {'label': 'Concentration', 'value': 'Concentration'},
-                {'label': 'AQI', 'value': 'AQI'}
-            ],
-            value='Concentration',
-            inline=True
-        )
-    ], style={'margin-top': '10px', 'margin-bottom': '10px'}),
-
+    
+    
+    
     #Row with the plots
     dbc.Row([
         #left column with graphs
@@ -167,12 +186,28 @@ app.layout = html.Div([
     Output('bar-graph-matplotlib_bottom', 'src'),
         Input('pollutant-dropdown', 'value'),
         Input('continent-dropdown', 'value'),
-        Input('from-dropdown', 'value'),
-        Input('to-dropdown', 'value'),
+        Input('from-to', 'value'),
         Input('station-type-checklist', 'value'),
         Input('data-type-radio', 'value'))
 
-def update_graph(selected_pollutant, selected_continent, selected_from_year, selected_to_year, selected_station_types, selected_data_type):
+def update_graph(selected_pollutant, selected_continent, selected_year, selected_station_types, selected_data_type):
+    """The main function to generate the graphs, takes the user selection and returns plots to dashly.
+
+    Arguments:
+        selected_pollutant - One of three pollutants, string
+        selected_continent - One of seven continents, string
+        selected_year - two years from the selection, Tuple of 2 ints
+        selected_station_types -
+        selected_data_type -
+
+    Returns:
+        fig - main plot that is returned to callback, mpl plot
+        fig_bar_top_10 - top 10 ranking regions plot, mpl plot
+        fig_bar_bottom_10 - bottom 10 ranking regions plot, mpl plot
+    """
+
+    selected_from_year=selected_year[0]
+    selected_to_year=selected_year[1]
 
     colors=['brown', 'red', 'purple', 'pink', 'green', 'black', 'blue']
     filtered_df = df.copy()
