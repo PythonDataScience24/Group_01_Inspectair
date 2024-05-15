@@ -1,0 +1,9 @@
+dash
+dash-bootstrap-components
+pandas
+numpy
+plotly
+folium
+matplotlib
+dash_bootstrap_components
+openpyxl

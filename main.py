@@ -1,9 +1,9 @@
 import os
 
 # Change path to your path
-os.getcwd()
-directory = "path\to\here\inspectair\Group_01_Inspectair"
-os.chdir(directory)
+#os.getcwd()
+#directory = "path\to\here\inspectair\Group_01_Inspectair"
+#os.chdir(directory)
 
 from dash import Dash
 import dash_bootstrap_components as dbc
