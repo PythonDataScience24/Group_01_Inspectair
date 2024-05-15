@@ -14,7 +14,9 @@ Presequisites:
 - Python
 - pip (Python package installer)
 
-Built With
+# How to get started
+
+# Built With:
 Programming languages:
 
 Python 3.x  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/b7d12eed-aff4-41c0-981c-25d4d78bbef8" width="42" height="24">
@@ -27,7 +29,7 @@ Plotly <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/as
 
 Folium <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/cb8513f7-909e-4ea8-94a8-7b291ccd6857"  width="30" height="25">
 
-Authors:
+# Authors:
 - Tim Schlatter - Timsched
 - Titaporn Janjumratsang - nam32
 - Hector Arribas Arias - Hecthor1999
