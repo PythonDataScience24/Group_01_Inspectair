@@ -11,10 +11,14 @@ Extra features:
 - Interactive app form
 
 Presequisites:
-- Python
 - pip (Python package installer)
+- Python
 
 # How to get started
+- Download the folder and navigate to the folder on terminal
+- Navigate to the terminal and enter the command: pip install -r install_requirements.txt
+- Open main.py in text editor and change file path to your filepath
+- Execute main.py in terminal using the command: python main.py - this will result in a url - open your web browser and go to http://127.0.0.1:8002 to see the Dashboard
 
 # Built With:
 Programming languages:
