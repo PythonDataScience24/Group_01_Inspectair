@@ -83,8 +83,9 @@ class AirQualityCallbacks:
                                                                                        selected_data_type=selected_data_type)
                 fig_bar_top_10 = create_ranking_plot(
                     selected_data_type=selected_data_type,
-                    x=top_ranked_10[selected_pollutant].index,
-                    y=top_ranked_10[selected_pollutant].values,
+                    y=top_ranked_10[selected_pollutant].index,
+                    x=top_ranked_10[selected_pollutant].values,
+                    ranking_type='top',
                     title=(f'Top 10 most polluted cities in {self.data.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
                            '(average values across timeframe are shown; low value is better)'),
                     xlabel=f'{self.data.legend[selected_pollutant]}',
@@ -93,8 +94,9 @@ class AirQualityCallbacks:
 
                 fig_bar_bottom_10 = create_ranking_plot(
                     selected_data_type=selected_data_type,
-                    x=bottom_ranked_10[selected_pollutant].index,
-                    y=bottom_ranked_10[selected_pollutant].values,
+                    y=bottom_ranked_10[selected_pollutant].index,
+                    x=bottom_ranked_10[selected_pollutant].values,
+                    ranking_type='bottom',
                     title=(f'Top 10 least polluted cities in {self.data.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
                            '(average values across timeframe are shown; low value is better)'),
                     xlabel=f'{self.data.legend[selected_pollutant]}',
@@ -132,10 +134,13 @@ class AirQualityCallbacks:
                 top_ranked_10, bottom_ranked_10, color_top, color_bottom = get_rank_10(df=filtered_df,
                                                                                        selected_pollutant=selected_pollutant,
                                                                                        selected_data_type=selected_data_type)
+                #get xlim for log concentration data
+
                 fig_bar_top_10 = create_ranking_plot(
                     selected_data_type=selected_data_type,
-                    x=top_ranked_10[selected_pollutant].index,
-                    y=top_ranked_10[selected_pollutant].values,
+                    y=top_ranked_10[selected_pollutant].index,
+                    x=top_ranked_10[selected_pollutant].values,
+                    ranking_type='top',
                     title=(f'Top 10 most polluted cities in {self.data.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
                            '(average values across timeframe are shown; low value is better)'),
                     xlabel=f'{self.data.legend[selected_pollutant]}',
@@ -144,8 +149,9 @@ class AirQualityCallbacks:
 
                 fig_bar_bottom_10 = create_ranking_plot(
                     selected_data_type=selected_data_type,
-                    x=bottom_ranked_10[selected_pollutant].index,
-                    y=bottom_ranked_10[selected_pollutant].values,
+                    y=bottom_ranked_10[selected_pollutant].index,
+                    x=bottom_ranked_10[selected_pollutant].values,
+                    ranking_type='bottom',
                     title=(f'Top 10 least polluted cities in {self.data.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
                            '(average values across timeframe are shown; low value is better)'),
                     xlabel=f'{self.data.legend[selected_pollutant]}',

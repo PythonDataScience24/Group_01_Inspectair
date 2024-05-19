@@ -18,7 +18,7 @@ from callback_manager import AirQualityCallbacks
 
 # Change path to your path
 os.getcwd()
-DIRECTORY = "C:/Users/Tim/Documents/School/UBE_MSC_SEM2/Advanced_python/Inspectair/airquality"
+DIRECTORY = "./"
 os.chdir(DIRECTORY)
 
 class AirQualityDashboard:
