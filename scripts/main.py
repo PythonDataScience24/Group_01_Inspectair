@@ -20,7 +20,7 @@ from callback_manager import AirQualityCallbacks
 current_directory= './'
 #current_directory= os.getcwd()
 directory = os.path.join(current_directory)
-os.chdir("C:\\inspectair\\Group_01_Inspectair\\scripts")
+os.chdir(directory)
 
 class AirQualityDashboard:
     """
