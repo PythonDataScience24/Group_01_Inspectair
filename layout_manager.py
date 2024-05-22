@@ -1,5 +1,6 @@
 from dash import html, dcc
 import dash_bootstrap_components as dbc
+from map import Map
 
 class AirQualityLayout:
     def __init__(self, app, data):
@@ -8,6 +9,13 @@ class AirQualityLayout:
         self.set_layout()
 
     def set_layout(self):
+        # Create the Folium map and save it as an HTML file
+        world_map = Map()
+
+        initial_heatmap_data = self.data.df[['latitude', 'longitude', 'pm25_concentration']].dropna().values.tolist()
+        world_map.add_heatmap(initial_heatmap_data)
+        world_map.save('map.html')
+
         self.app.layout = html.Div([
             dbc.Row([
                 dbc.Col(
@@ -87,4 +95,18 @@ class AirQualityLayout:
                     html.Img(id='bar-graph-matplotlib_bottom', style={'max-width': '100%', 'height': 'auto'})
                 ], width=4),
             ]),
+
+            # Add the Folium map 
+            dbc.Row([
+                dbc.Col(
+                    html.Iframe(
+                        id='folium-map',
+                        srcDoc=open('map.html', 'r').read(),
+                        width='100%',
+                        height='600'
+                    ),
+                    width=12
+                )
+            ], style={'margin-top': '20px'})
         ])
+
