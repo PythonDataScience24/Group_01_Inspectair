@@ -22,15 +22,15 @@ Presequisites:
 # Built With:
 Programming languages:
 
-Python  3.9.13  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/b7d12eed-aff4-41c0-981c-25d4d78bbef8" width="42" height="24">
+Python  v3.9.13  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/b7d12eed-aff4-41c0-981c-25d4d78bbef8" width="42" height="24">
 
 Libraries used for generating visualizations:
 
-Matplotlib <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/c83effe2-6e1e-4a1f-9bf3-a199752b5fcb" width="27" height="25">
+Matplotlib v3.9.0 <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/c83effe2-6e1e-4a1f-9bf3-a199752b5fcb" width="27" height="25">
 
-Plotly <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/e4d20f34-78bc-4180-a306-6d7c3a2b0cfc" width="38" height="25"> 
+Plotly v5.22.0 <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/e4d20f34-78bc-4180-a306-6d7c3a2b0cfc" width="38" height="25"> 
 
-Folium <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/cb8513f7-909e-4ea8-94a8-7b291ccd6857"  width="30" height="25">
+Folium v0.16.0 <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/cb8513f7-909e-4ea8-94a8-7b291ccd6857"  width="30" height="25">
 
 # Authors:
 - Tim Schlatter - Timsched
