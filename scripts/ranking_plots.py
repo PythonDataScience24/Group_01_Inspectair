@@ -10,8 +10,13 @@ import matplotlib.pyplot as plt
 matplotlib.use('agg')
 
 def get_rank_10(df, selected_pollutant, selected_data_type):
-    #function returns the top 10 and bottom 10 mean values for a selected pollutant
-    #by city, as well as their corresponding AQI colour palettes
+    '''A function which gets the top 10 (for both highest and lowest) for a selected 
+    pollutant by city, as well as the corresponging AQI colour palettes
+    
+    Attributes:
+    df: a dataframe containing the relevant data from which the ranking will be extracted
+    selected_pollutant: a string indicating which pollutant is selected (e.g. NO2)
+    selected_datatypes: a string indicating data type ['Concentration', 'AQI]'''
 
     mean_pollution_city = pd.pivot_table(data=df, index=['city'], aggfunc='mean', values=selected_pollutant)
     top_ranked_10 = mean_pollution_city.sort_values(by=selected_pollutant, ascending=False)[0:10]
@@ -19,6 +24,7 @@ def get_rank_10(df, selected_pollutant, selected_data_type):
     #reverse order for horizontal barplot
     top_ranked_10 = top_ranked_10.sort_values(by=selected_pollutant)
     bottom_ranked_10 = bottom_ranked_10.sort_values(by=selected_pollutant, ascending=False)
+    print(bottom_ranked_10)
 
     #define different colour palettes for AQI and concentration
     if str(selected_data_type)=='AQI':
@@ -30,8 +36,8 @@ def get_rank_10(df, selected_pollutant, selected_data_type):
     return top_ranked_10, bottom_ranked_10, color_top, color_bottom
 
 def create_ranking_plot(selected_data_type, x, y, ranking_type, xlim=None, text=None, xlabel=None, color=None, title=None):
-    #function creates matplotlib ranking plot (horizontal barplot), 
-    #saves it to temporary buffer and embeds the result into html
+    '''A function which creates a ranking plot using matplotlib (horizontal barplot).
+    The plot is saved to a temporary buffer and emebeded into html as an image. '''
     
     #### format the city names - introduce line breaks for long names
     y_formatted = len(y)*[0]
@@ -45,7 +51,6 @@ def create_ranking_plot(selected_data_type, x, y, ranking_type, xlim=None, text=
         else:
             y_formatted[i] = city_name
     
-
     #### separate the plots depening on the selected data type (AQI or concentration)
     if str(selected_data_type == 'Concentration'):
         fig, ax = plt.subplots(figsize = (12,6))
@@ -53,7 +58,6 @@ def create_ranking_plot(selected_data_type, x, y, ranking_type, xlim=None, text=
         plt.xlabel(f'log {xlabel}')
         plt.title(title)
 
-        
         #set equal xlims for both plots in log units
         if ranking_type == 'top':
             global xlim_log
@@ -66,7 +70,11 @@ def create_ranking_plot(selected_data_type, x, y, ranking_type, xlim=None, text=
         plt.gca().spines['right'].set_visible(False) 
     
         for i in range(len(y)):
-            plt.text(x=(np.log(x[i])+0.1), y=i, s=round(text[i], 2), va = 'baseline', color = 'red')
+            if x[i] < 0.01: 
+                #increase rounding tolerance for really small numers
+                plt.text(x=(np.log(x[i]+1)), y=i, s=round(text[i], 5), va = 'baseline', color = 'red')
+            else:
+                plt.text(x=(np.log(x[i]+0.1)), y=i, s=round(text[i], 3), va = 'baseline', color = 'red')
 
     if str(selected_data_type)=='AQI':
         fig, ax = plt.subplots(figsize = (12,6))
@@ -82,7 +90,6 @@ def create_ranking_plot(selected_data_type, x, y, ranking_type, xlim=None, text=
         plt.gca().spines['top'].set_visible(False) 
         plt.gca().spines['right'].set_visible(False) 
 
-    
         #add the non transformed values to the plots as text for easier interpretation
         for i in range(len(y)):
            plt.text(x=(x[i]+1), y=i, s=round(text[i], 2), va = 'baseline')
