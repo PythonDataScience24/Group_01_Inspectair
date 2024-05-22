@@ -42,8 +42,6 @@ def calculate_aqi(pollutant_type, concentrations):
         raise TypeError("concentrations has to be a list or a numpy array.")
     
 
-    print( type(concentrations))
-
     aqi_values = []
     for conc in concentrations:
         if np.isnan(conc):
