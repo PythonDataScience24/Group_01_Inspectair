@@ -48,11 +48,12 @@ def create_ranking_plot(selected_data_type, x, y, ranking_type, xlim=None, text=
 
     #### separate the plots depening on the selected data type (AQI or concentration)
     if str(selected_data_type == 'Concentration'):
-        fig = plt.figure(figsize=(12, 6), constrained_layout=True)
+        fig, ax = plt.subplots(figsize = (12,6))
         plt.barh(y_formatted, np.log(x), color=color)
         plt.xlabel(f'log {xlabel}')
-        plt.title(title)    
-        plt.tight_layout()
+        plt.title(title)
+
+        
         #set equal xlims for both plots in log units
         if ranking_type == 'top':
             global xlim_log
@@ -68,7 +69,7 @@ def create_ranking_plot(selected_data_type, x, y, ranking_type, xlim=None, text=
             plt.text(x=(np.log(x[i])+0.1), y=i, s=round(text[i], 2), va = 'baseline', color = 'red')
 
     if str(selected_data_type)=='AQI':
-        fig = plt.figure(figsize=(12, 6), constrained_layout=True)
+        fig, ax = plt.subplots(figsize = (12,6))
         plt.barh(y_formatted, x, color=color)
         plt.xlabel(xlabel)
         plt.title(title)   
@@ -78,9 +79,9 @@ def create_ranking_plot(selected_data_type, x, y, ranking_type, xlim=None, text=
                          'unhealthy': 'orange', 'very unhealthy': 'purple', 'hazardous': 'maroon'}
         legend_handles = [plt.Line2D([0], [0], color=color, linewidth=3, linestyle='-') for label, color in legend_labels.items()]
         plt.legend(legend_handles, legend_labels.keys(), title='AQI color scheme')
-        plt.tight_layout() 
         plt.gca().spines['top'].set_visible(False) 
         plt.gca().spines['right'].set_visible(False) 
+
     
         #add the non transformed values to the plots as text for easier interpretation
         for i in range(len(y)):
