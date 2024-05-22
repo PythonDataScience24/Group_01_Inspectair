@@ -35,7 +35,7 @@ class AirQualityData:
         """
         
         file_path = data_path
-        self.df = pd.read_excel(file_path, sheet_name=sheet_name)
+        self.df = pd.read_excel(data_path, sheet_name=sheet_name)
         self.df["pm25_aqi"] = pd.DataFrame(calculate_aqi("pm25", (self.df["pm25_concentration"]).to_numpy()))
         self.df["pm10_aqi"] = pd.DataFrame(calculate_aqi("pm10", (self.df["pm10_concentration"]).to_numpy()))
         self.df["no2_aqi"] = pd.DataFrame(calculate_aqi("no2", (self.df["no2_concentration"]).to_numpy()))
