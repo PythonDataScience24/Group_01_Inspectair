@@ -22,7 +22,7 @@ Presequisites:
 # Built With:
 Programming languages:
 
-Python 3.x  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/b7d12eed-aff4-41c0-981c-25d4d78bbef8" width="42" height="24">
+Python  3.9.13  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/b7d12eed-aff4-41c0-981c-25d4d78bbef8" width="42" height="24">
 
 Libraries used for generating visualizations:
 
