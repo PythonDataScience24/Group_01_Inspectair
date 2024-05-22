@@ -3,7 +3,7 @@ import regex as re
 import numpy as np
 import pandas as pd
 from math import floor
-from .datahandling import *
+from datahandling import *
 from io import BytesIO
 import matplotlib
 import matplotlib.pyplot as plt

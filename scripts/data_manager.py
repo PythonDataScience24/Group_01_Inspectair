@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from .datahandling import calculate_aqi
+from datahandling import calculate_aqi
 
 class AirQualityData:
     def __init__(self, data_path, sheet_name="Update 2024 (V6.1)"):

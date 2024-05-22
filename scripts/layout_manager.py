@@ -1,6 +1,6 @@
 from dash import html, dcc
 import dash_bootstrap_components as dbc
-from .map import Map
+from map import Map
 
 class AirQualityLayout:
     def __init__(self, app, data):
