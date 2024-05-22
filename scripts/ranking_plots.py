@@ -24,7 +24,6 @@ def get_rank_10(df, selected_pollutant, selected_data_type):
     #reverse order for horizontal barplot
     top_ranked_10 = top_ranked_10.sort_values(by=selected_pollutant)
     bottom_ranked_10 = bottom_ranked_10.sort_values(by=selected_pollutant, ascending=False)
-    print(bottom_ranked_10)
 
     #define different colour palettes for AQI and concentration
     if str(selected_data_type)=='AQI':
