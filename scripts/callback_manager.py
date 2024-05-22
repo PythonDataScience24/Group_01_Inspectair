@@ -5,7 +5,28 @@ from ranking_plots import get_rank_10, create_ranking_plot
 from map import Map
 
 class AirQualityCallbacks:
+    """
+    A class to handle the callbacks for the Air Quality Dashboard.
+
+    Attributes:
+        app: The Dash application instance.
+        data: The air quality data used in the dashboard (excel file input). 
+
+    Methods:
+        generate_folium_map(filtered_data, selected_pollutant):
+            Generates a Folium map with heatmap data.
+        set_callbacks():
+            Sets up the Dash callbacks to handle user interactions and update the dashboard.
+    """
+
     def __init__(self, app, data):
+        """
+        Initializes the AirQualityCallbacks with the given Dash app and data.
+
+        Args:
+            app: The Dash application instance.
+            data: The air quality data.
+        """
         self.app = app
         self.data = data
         self.set_callbacks()
@@ -31,6 +52,20 @@ class AirQualityCallbacks:
             Input('data-type-radio', 'value')
         )
         def update_graph(selected_pollutant, selected_continent, selected_year, selected_station_types, selected_data_type):
+            """
+            Updates the graphs and map based on the user input.
+
+            Args:
+                selected_pollutant: The pollutant selected from the dropdown.
+                selected_continent: The continent selected from the dropdown.
+                selected_year: The range of years selected.
+                selected_station_types: The types of stations selected from the checklist.
+                selected_data_type: The data type selected (concentration or AQI).
+
+            Returns:
+                A tuple containing the updated figure for the main plot, the top ranking bar graph,
+                the bottom ranking bar graph, and the HTML for the Folium map.
+            """
             selected_from_year = selected_year[0]
             selected_to_year = selected_year[1]
             colors = ['brown', 'red', 'purple', 'pink', 'green', 'black', 'blue']
