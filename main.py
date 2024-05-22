@@ -10,16 +10,16 @@ Modules:
 
 """
 import os
-from dash import Dash 
-import dash_bootstrap_components as dbc 
+from dash import Dash
+import dash_bootstrap_components as dbc
 from data_manager import AirQualityData
 from layout_manager import AirQualityLayout
 from callback_manager import AirQualityCallbacks
 
 # Change path to your path
-os.getcwd()
-DIRECTORY = "C:/Users/Tim/Documents/School/UBE_MSC_SEM2/Advanced_python/Inspectair/airquality"
-os.chdir(DIRECTORY)
+current_directory= os.getcwd()
+directory = os.path.join(current_directory)
+os.chdir(directory)
 
 class AirQualityDashboard:
     """
@@ -29,7 +29,7 @@ class AirQualityDashboard:
         data: An instance of AirQualityData containing the air quality data.
         app: The Dash application instance.
         layout: The layout of the dashboard defining position and style of components.
-        callbacks:  The callbacks to handle user interactions with elements and plots.
+        callbacks: The callbacks to handle user interactions with elements and plots.
 
     Methods:
         run_server(): Runs the Dash server on the specified port.
@@ -44,10 +44,11 @@ class AirQualityDashboard:
         """
         Runs the dash on the specified port
         """
-        self.app.run_server(debug=False, port=8002)
+        self.app.run_server(debug=True, port=8002)
 
 
 if __name__ == '__main__':
     DATA_FILE_PATH = os.path.join("who_ambient_air_quality_database_version_2024_(v6.1).xlsx")
     DASHBOARD = AirQualityDashboard(DATA_FILE_PATH)
     DASHBOARD.run_server()
+

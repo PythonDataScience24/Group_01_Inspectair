@@ -1,7 +1,8 @@
-from dash import Input, Output
 import plotly.graph_objects as go
+from dash import Input, Output
 import re
 from ranking_plots import get_rank_10, create_ranking_plot
+from map import Map
 
 class AirQualityCallbacks:
     def __init__(self, app, data):
@@ -9,11 +10,20 @@ class AirQualityCallbacks:
         self.data = data
         self.set_callbacks()
 
+    def generate_folium_map(self, filtered_data, selected_pollutant):
+        # Generate a Folium map with heatmap data
+        world_map = Map()
+        heatmap_data = filtered_data[['latitude', 'longitude', selected_pollutant]].dropna().values.tolist()
+        world_map.add_heatmap(heatmap_data)
+        world_map.save('map.html')
+        return open('map.html', 'r').read()
+
     def set_callbacks(self):
         @self.app.callback(
             Output('indicator-graphic', 'figure'),
             Output('bar-graph-matplotlib', 'src'),
             Output('bar-graph-matplotlib_bottom', 'src'),
+            Output('folium-map', 'srcDoc'),
             Input('pollutant-dropdown', 'value'),
             Input('continent-dropdown', 'value'),
             Input('from-to', 'value'),
@@ -41,7 +51,7 @@ class AirQualityCallbacks:
                     }],
                     template='plotly_white'
                 )
-                return fig, None, None
+                return fig, None, None, open('map.html', 'r').read()
 
             if selected_station_types.count('all') == 0:
                 filtered_df = filtered_df.dropna(subset=['type_of_stations'])
@@ -85,7 +95,7 @@ class AirQualityCallbacks:
                     selected_data_type=selected_data_type,
                     x=top_ranked_10[selected_pollutant].index,
                     y=top_ranked_10[selected_pollutant].values,
-                    title=(f'Top 10 most polluted cities in {self.data.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
+                    title=(f'Top 10 most polluted cities ({selected_from_year}-{selected_to_year})\n'
                            '(average values across timeframe are shown; low value is better)'),
                     xlabel=f'{self.data.legend[selected_pollutant]}',
                     color=color_top,
@@ -95,37 +105,29 @@ class AirQualityCallbacks:
                     selected_data_type=selected_data_type,
                     x=bottom_ranked_10[selected_pollutant].index,
                     y=bottom_ranked_10[selected_pollutant].values,
-                    title=(f'Top 10 least polluted cities in {self.data.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
+                    title=(f'Top 10 least polluted cities ({selected_from_year}-{selected_to_year})\n'
                            '(average values across timeframe are shown; low value is better)'),
                     xlabel=f'{self.data.legend[selected_pollutant]}',
                     color=color_bottom,
                     text=bottom_ranked_10[selected_pollutant].values)
 
-                return fig, fig_bar_top_10, fig_bar_bottom_10
+                return fig, fig_bar_top_10, fig_bar_bottom_10, self.generate_folium_map(filtered_df, selected_pollutant)
 
             else:
                 filtered_df = filtered_df[filtered_df['who_region'] == selected_continent]
-                filtered_df = filtered_df.dropna(subset=[selected_pollutant])
-                
-                countries = filtered_df['country_name'].unique()
-                colors = ['brown', 'red', 'purple', 'pink', 'green', 'black', 'blue', 'orange', 'grey']
-                for country in countries:
-                    country_data = filtered_df[filtered_df['country_name'] == country]
-                    if not country_data.empty:
-                        df_pollutant_mean_year = country_data.pivot_table(index='year', values=selected_pollutant, aggfunc='mean')
-                        fig.add_trace(go.Scatter(
-                            x=df_pollutant_mean_year.index,
-                            y=df_pollutant_mean_year[selected_pollutant],
-                            mode='lines',
-                            name=country,
-                            line=dict(color=colors[countries.tolist().index(country) % len(colors)])
-                        ))
-
+                fig = go.Figure()
+                df_pollutant_mean_year = filtered_df.pivot_table(index='year', values=selected_pollutant, aggfunc='mean')
+                fig.add_trace(go.Scatter(
+                    x=df_pollutant_mean_year.index,
+                    y=df_pollutant_mean_year[selected_pollutant],
+                    mode='lines',
+                    name=self.data.continent_dict[selected_continent],
+                    line=dict(color='blue')
+                ))
                 fig.update_layout(
-                    title=self.data.legend[selected_pollutant] + ' Concentration Across Different Countries in ' + self.data.continent_dict[selected_continent],
+                    title=self.data.legend[selected_pollutant] + ' in ' + self.data.continent_dict[selected_continent],
                     xaxis_title='Year',
                     yaxis_title=self.data.legend[selected_pollutant],
-                    legend_title='Country',
                     template='plotly_white'
                 )
 
@@ -136,7 +138,7 @@ class AirQualityCallbacks:
                     selected_data_type=selected_data_type,
                     x=top_ranked_10[selected_pollutant].index,
                     y=top_ranked_10[selected_pollutant].values,
-                    title=(f'Top 10 most polluted cities in {self.data.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
+                    title=(f'Top 10 most polluted cities ({selected_from_year}-{selected_to_year})\n'
                            '(average values across timeframe are shown; low value is better)'),
                     xlabel=f'{self.data.legend[selected_pollutant]}',
                     color=color_top,
@@ -146,10 +148,11 @@ class AirQualityCallbacks:
                     selected_data_type=selected_data_type,
                     x=bottom_ranked_10[selected_pollutant].index,
                     y=bottom_ranked_10[selected_pollutant].values,
-                    title=(f'Top 10 least polluted cities in {self.data.continent_dict[selected_continent]} ({selected_from_year}-{selected_to_year})\n'
+                    title=(f'Top 10 least polluted cities ({selected_from_year}-{selected_to_year})\n'
                            '(average values across timeframe are shown; low value is better)'),
                     xlabel=f'{self.data.legend[selected_pollutant]}',
                     color=color_bottom,
                     text=bottom_ranked_10[selected_pollutant].values)
 
-                return fig, fig_bar_top_10, fig_bar_bottom_10
+                return fig, fig_bar_top_10, fig_bar_bottom_10, self.generate_folium_map(filtered_df, selected_pollutant)
+
