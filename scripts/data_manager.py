@@ -1,11 +1,10 @@
 import pandas as pd
 import numpy as np
-from .datahandling import calculate_aqi
+from datahandling import calculate_aqi
 
 class AirQualityData:
     def __init__(self, data_path, sheet_name="Update 2024 (V6.1)"):
-        parent_directory = "../"
-        file_path = parent_directory + data_path
+        file_path = data_path
         self.df = pd.read_excel(file_path, sheet_name=sheet_name)
         self.df["pm25_aqi"] = pd.DataFrame(calculate_aqi("pm25", (self.df["pm25_concentration"]).to_numpy()))
         self.df["pm10_aqi"] = pd.DataFrame(calculate_aqi("pm10", (self.df["pm10_concentration"]).to_numpy()))
