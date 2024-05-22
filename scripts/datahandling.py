@@ -30,11 +30,18 @@ def calculate_aqi(pollutant_type, concentrations):
 
     Input:
         pollutant_type: string of the pollutant either no2, pm25 or pm10
-        concentrations: list of the concentrations that aqi is to be calculated
+        concentrations: list or numpy array of the concentrations that aqi is to be calculated
 
     Output:
         aqi_values: list of aqi values at the concentrations given.
     """
+    if type(pollutant_type) not in [str]:
+        raise TypeError("Pollutant has to be a string (either no2,pm10 or pm25)")
+    
+    if not isinstance(concentrations, (list,np.ndarray)):
+        raise TypeError("concentrations has to be a list or a numpy array.")
+    
+
     aqi_values = []
     for conc in concentrations:
         if np.isnan(conc):
@@ -53,9 +60,9 @@ def calculate_aqi(pollutant_type, concentrations):
                            (55.5, 150.4, 151, 200), (150.5, 250.4, 201, 300),
                            (250.5, 350.4, 301, 400), (350.5, 500.4, 401, 500)]
         elif pollutant_type == 'pm10':
-            breakpoints = [(0, 12, 0, 50), (12.1, 35.4, 51, 100), (35.5, 55.4, 101, 150),
-                           (55.5, 150.4, 151, 200), (150.5, 100.4, 201, 300),
-                           (100.5, 350.4, 301, 400), (350.5, 500.4, 401, 500)]
+            breakpoints = [(0, 54, 0, 50), (55, 154, 51, 100), (155, 254, 101, 150),
+                           (255, 354, 151, 200), (355, 424, 201, 300),
+                           (425, 529, 301, 400), (530, 604, 401, 500)]
         else:
             raise ValueError("Unsupported pollutant type")
 

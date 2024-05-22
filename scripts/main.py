@@ -17,8 +17,8 @@ from layout_manager import AirQualityLayout
 from callback_manager import AirQualityCallbacks
 
 # Change path to your path
-current_directory= './'
-#current_directory= os.getcwd()
+current_directory= os.getcwd()
+
 directory = os.path.join(current_directory)
 os.chdir(directory)
 
@@ -53,6 +53,9 @@ if __name__ == '__main__':
     DATA_FILE_PATH = os.path.join("who_ambient_air_quality_database_version_2024_(v6.1).xlsx")
     try:
         # Attempt to create an instance of the AirQualityDashboard and run the server
+        DASHBOARD = AirQualityDashboard(DATA_FILE_PATH)
+        DASHBOARD.run_server()
+        DATA_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"who_ambient_air_quality_database_version_2024_(v6.1).xlsx")
         DASHBOARD = AirQualityDashboard(DATA_FILE_PATH)
         DASHBOARD.run_server()
     except FileNotFoundError as e:
