@@ -1,8 +1,8 @@
 import plotly.graph_objects as go
 from dash import Input, Output
 import re
-from .ranking_plots import get_rank_10, create_ranking_plot
-from .map import Map
+from ranking_plots import get_rank_10, create_ranking_plot
+from map import Map
 
 class AirQualityCallbacks:
     def __init__(self, app, data):

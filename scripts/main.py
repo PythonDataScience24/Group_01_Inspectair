@@ -18,6 +18,7 @@ from callback_manager import AirQualityCallbacks
 
 # Change path to your path
 current_directory= os.getcwd()
+
 directory = os.path.join(current_directory)
 os.chdir(directory)
 
