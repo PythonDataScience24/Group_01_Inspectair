@@ -1,38 +1,82 @@
 import folium
-from folium.plugins import MarkerCluster
-from folium.plugins import HeatMap
+from folium.plugins import MarkerCluster, HeatMap
 
 class Map:
+    """
+    A class to create and manage an interactive map with various layers like markers, 
+    clustered markers, and heatmaps using the Folium library (python wrapper for the javascript library leaflet).
+    """
 
     def __init__(self, start_coords=[20, 0], zoom_start=2, max_zoom=2):
+        """
+        Initialize the Map object.
+
+        Parameters:
+        start_coords (list): The starting coordinates for the map [latitude, longitude].
+        zoom_start (int): Initial zoom level for the map.
+        max_zoom (int): Maximum zoom level for the map.
+        """
         self.map = folium.Map(location=start_coords, zoom_start=zoom_start, max_zoom=max_zoom)
+        self.layers = []  # Keep track of layers for the layer control
 
-    def add_marker(self, location, popup=None, tooltip=None):
-        folium.Marker(location=location, popup=popup, tooltip=tooltip).add_to(self.map)
+    def add_marker(self, location, popup=None, tooltip=None, layer_name='Marker'):
+        """
+        Add a single marker to the map.
 
-    def add_clustered_markers(self, locations, popups=None, tooltips=None):
-        marker_cluster = MarkerCluster().add_to(self.map)
+        Parameters:
+        location (list): Coordinates of the marker [latitude, longitude].
+        popup (str, optional): Popup text for the marker.
+        tooltip (str, optional): Tooltip text for the marker.
+        layer_name (str): Name of the layer in the LayerControl.
+        """
+        feature_group = folium.FeatureGroup(name=layer_name)
+        marker = folium.Marker(location=location, popup=popup, tooltip=tooltip)
+        marker.add_to(feature_group)
+        feature_group.add_to(self.map)
+        self.layers.append(feature_group)
+
+    def add_clustered_markers(self, locations, popups=None, tooltips=None, layer_name='Clustered Markers'):
+        """
+        Add clustered markers to the map.
+
+        Parameters:
+        locations (list): List of coordinates for the markers [[lat1, lon1], [lat2, lon2], ...].
+        popups (list, optional): List of popup texts corresponding to the markers.
+        tooltips (list, optional): List of tooltip texts corresponding to the markers.
+        layer_name (str): Name of the layer in the LayerControl.
+        """
+        marker_cluster = MarkerCluster(name=layer_name)
         for i, location in enumerate(locations):
             popup = popups[i] if popups else None
             tooltip = tooltips[i] if tooltips else None
             folium.Marker(location=location, popup=popup, tooltip=tooltip).add_to(marker_cluster)
-    
-    def add_heatmap(self, locations, radius=10, blur=15, max_zoom=2):
+        marker_cluster.add_to(self.map)
+        self.layers.append(marker_cluster)
 
-        # Create gradient dictionary based on AQI thresholds
+    def add_heatmap(self, locations, radius=10, blur=15, max_zoom=2, layer_name='Heatmap'):
+        """
+        Add a heatmap layer to the map.
+
+        Parameters:
+        locations (list): List of coordinates for the heatmap [[lat1, lon1], [lat2, lon2], ...].
+        radius (int): Radius of each point on the heatmap.
+        blur (int): Amount of blur for the heatmap points.
+        max_zoom (int): Maximum zoom level for the heatmap.
+        layer_name (str): Name of the layer in the LayerControl.
+        """
         gradient = {
-            # the numbers for the gradient have to be between 0 and 1
-            1.0: "maroon",        # Corresponds to normalized AQI value >= 250/500.4
-            0.75: "purple",       # Corresponds to normalized AQI value >= 150/500.4
-            0.5: "red",           # Corresponds to normalized AQI value >= 55/500.4
-            0.35: "orange",       # Corresponds to normalized AQI value >= 35/500.4
-            0.24: "yellow",       # Corresponds to normalized AQI value >= 12/500.4
-            0.0: "green"          # Corresponds to normalized AQI value >= 0
+            1.0: "maroon",
+            0.75: "purple",
+            0.5: "red",
+            0.35: "orange",
+            0.24: "yellow",
+            0.0: "green"
         }
-        
-        HeatMap(locations, radius=radius, blur=blur, max_zoom=max_zoom, gradient=gradient).add_to(self.map)
+        heatmap = HeatMap(locations, radius=radius, blur=blur, max_zoom=max_zoom, gradient=gradient, name=layer_name)
+        heatmap.add_to(self.map) # Add heatmap as a raster layer to the map
+        self.layers.append(heatmap) # Add layer control to the heatmap
 
-        # Add custom legend to map in html as folium does not have a native tool to do it
+        # Add custom legend to map in html as there is no native tool in folium
         legend_html = '''
         <div style="position: fixed;
                     bottom: 50px; left: 50px; width: 100px; height: 190px; 
@@ -48,12 +92,37 @@ class Map:
             <i style="background:maroon; width: 20px; height: 20px; display: inline-block;"></i> 301-500
         </p>
         </div>
-        ''' 
+        '''
         self.map.get_root().html.add_child(folium.Element(legend_html))
-        self.map = folium.LayerControl().add_to(self.map)
+
+    def update_layer_control(self):
+        """
+        Update the LayerControl to reflect the current layers on the map.
+        """
+        # Remove any existing LayerControl
+        for child in self.map._children:
+            if isinstance(self.map._children[child], folium.LayerControl):
+                self.map._children.pop(child)
+                break
+        # Add a new LayerControl
+        folium.LayerControl().add_to(self.map)
 
     def save(self, file_path='map.html'):
+        """
+        Save the map to an HTML file.
+
+        Parameters:
+        file_path (str): The file path to save the map.
+        """
+        self.update_layer_control()  # Ensure LayerControl is updated before saving
         self.map.save(file_path)
 
     def get_map(self):
+        """
+        Get the current map object.
+
+        Returns:
+        folium.Map: The current map object.
+        """
+        self.update_layer_control()  # Ensure LayerControl is updated before returning the map
         return self.map

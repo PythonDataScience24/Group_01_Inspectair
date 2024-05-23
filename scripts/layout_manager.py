@@ -1,4 +1,4 @@
-from dash import html, dcc, get_asset_url
+from dash import html, dcc, Input, Output, get_asset_url
 import dash_bootstrap_components as dbc
 from map import Map
 
@@ -7,6 +7,7 @@ class AirQualityLayout:
         self.app = app
         self.data = data
         self.set_layout()
+        self.set_callbacks()
 
     def set_layout(self):
         # Create the Folium map and save it as an HTML file
@@ -71,6 +72,7 @@ class AirQualityLayout:
                     max=2022,
                     step=1,
                     value=[2015, 2020],
+                    allowCross=False,
                     marks={i: str(i) for i in range(2013, 2023, 1)}
                 )
             ], style={'margin-top': '10px', 'margin-bottom': '10px', 'margin-left': '20px', 'margin-right': '20px'}),
@@ -143,3 +145,18 @@ class AirQualityLayout:
             ])
         ])
 
+    def set_callbacks(self):
+        @self.app.callback(
+            Output('station-type-checklist', 'options'),
+            Input('station-type-checklist', 'value')
+        )
+        def update_checklist(selected_values):
+            options = [{'label': key, 'value': key} for key in self.data.station_type.keys()] 
+            if 'all' in selected_values:
+                for option in options:
+                    if option['value'] != 'all':
+                        option['disabled'] = True
+            else:
+                for option in options:
+                    option['disabled'] = False
+            return options
