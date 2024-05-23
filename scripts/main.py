@@ -18,6 +18,7 @@ from callback_manager import AirQualityCallbacks
 
 # Change path to your path
 current_directory= os.getcwd()
+
 directory = os.path.join(current_directory)
 os.chdir(directory)
 
@@ -40,15 +41,24 @@ class AirQualityDashboard:
         self.layout = AirQualityLayout(self.app, self.data)
         self.callbacks = AirQualityCallbacks(self.app, self.data)
 
+
     def run_server(self):
         """
-        Runs the dash on the specified port
+        Runs Dash on the specified port
         """
-        self.app.run_server(debug=True, port=8002)
+        self.app.run_server(debug=False, port=8002)
 
 
 if __name__ == '__main__':
-    DATA_FILE_PATH = os.path.join("who_ambient_air_quality_database_version_2024_(v6.1).xlsx")
-    DASHBOARD = AirQualityDashboard(DATA_FILE_PATH)
-    DASHBOARD.run_server()
-
+    DATA_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"who_ambient_air_quality_database_version_2024_(v6.1).xlsx")
+    
+    try:
+        # Attempt to create an instance of the AirQualityDashboard and run the server
+        DASHBOARD = AirQualityDashboard(DATA_FILE_PATH)
+        DASHBOARD.run_server()
+    except FileNotFoundError as e:
+        # Handle the case where data file does not exist
+        print(f"Error: The file '{DATA_FILE_PATH}' does not exist. Please check the file path and try again.")
+    except Exception as e:
+        # Handle any other exceptions during initialization
+        print(f"Error: {e}")

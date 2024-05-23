@@ -1,12 +1,41 @@
 import pandas as pd
 import numpy as np
-from .datahandling import calculate_aqi
+from datahandling import calculate_aqi
 
 class AirQualityData:
+    """
+    A class to handle the loading and processing of air quality data.
+
+    Attributes:
+        df: A pandas DataFrame containing the air quality data.
+        legend: A dictionary for mapping pollutant columns to their full names.
+        continent_dict: A dictionary mapping continent codes to their names.
+        reverse_continent_dict: A dictionary mapping continent names to their codes.
+        pollutant_type: A dictionary for mapping pollutant columns to their full names.
+        reverse_pollutant_type: A dictionary mapping pollutant names to their column names.
+        station_type: A dictionary for mapping station types to their specific types.
+        reverse_station_type: A dictionary mapping specific station types to their general categories.
+        continents_options: A list of dictionaries for continent options for dropdown menus.
+        pollutants_options: A list of dictionaries for pollutant options for dropdown menus.
+        stations_options: A list of dictionaries for station type options for dropdown menus.
+        years_options: A list of dictionaries for year options for dropdown menus.
+
+    Methods:
+        __init__(data_path, sheet_name="Update 2024 (V6.1)"):
+            Initializes the AirQualityData with the given data path and sheet name.
+    """
+
     def __init__(self, data_path, sheet_name="Update 2024 (V6.1)"):
-        parent_directory = "../"
-        file_path = parent_directory + data_path
-        self.df = pd.read_excel(file_path, sheet_name=sheet_name)
+        """
+        Initializes the AirQualityData with the given data path and sheet name.
+
+        Args:
+            data_path (str): The path to the data file.
+            sheet_name (str): The sheet name in the Excel file. Defaults to "Update 2024 (V6.1)".
+        """
+        
+        file_path = data_path
+        self.df = pd.read_excel(data_path, sheet_name=sheet_name)
         self.df["pm25_aqi"] = pd.DataFrame(calculate_aqi("pm25", (self.df["pm25_concentration"]).to_numpy()))
         self.df["pm10_aqi"] = pd.DataFrame(calculate_aqi("pm10", (self.df["pm10_concentration"]).to_numpy()))
         self.df["no2_aqi"] = pd.DataFrame(calculate_aqi("no2", (self.df["no2_concentration"]).to_numpy()))
