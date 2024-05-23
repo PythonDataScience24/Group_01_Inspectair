@@ -53,6 +53,7 @@ class AirQualityLayout:
                     id='from-to',
                     min=2013,
                     max=2022,
+                    step=1,
                     value=[2015, 2020],
                     marks={i: str(i) for i in range(2013, 2023, 1)}
                 )
@@ -89,11 +90,11 @@ class AirQualityLayout:
             ]),
 
             dbc.Row([
-                dbc.Col(dcc.Graph(id='indicator-graphic'), width=8),
+                dbc.Col(dcc.Graph(id='indicator-graphic'), width="auto"),
                 dbc.Col([
                     html.Img(id='bar-graph-matplotlib', style={'max-width': '100%', 'height': 'auto'}),
                     html.Img(id='bar-graph-matplotlib_bottom', style={'max-width': '100%', 'height': 'auto'})
-                ], width=4),
+                ], width=5),
             ]),
 
             # Add the Folium map 
@@ -105,8 +106,7 @@ class AirQualityLayout:
                         width='100%',
                         height='600'
                     ),
-                    width=12
-                )
+                    width={"size":10, "offset":1})
             ], style={'margin-top': '20px'})
         ])
 
