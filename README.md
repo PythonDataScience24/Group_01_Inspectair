@@ -29,7 +29,7 @@ Presequisites:
 - On the right two rankings can be seen, the top ranking shows the most polluted areas and the bottom ranking shows the least polluted areas from the chosen weather stations.
 - At the bottom of the page an interactive map can be seen, the heatmap layer indicates the level of pollution in the air on the regions selected.
 ### Interpretability and disclaimers
-- There can be a biased created by the heterogeneity of the amount of weather stations present in different countries, this means that some regions will not display any pollution due to a lack of weather stations and therefore a lack of data availability to actually get a measurement of the air quality. 
+- There can be a bias created by the heterogeneity of the amount of weather stations present in different countries, this means that some regions will not display any pollution due to a lack of weather stations and therefore a lack of data availability to actually get a measurement of the air quality. 
 
 # Built With:
 Programming languages:
