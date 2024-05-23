@@ -21,7 +21,7 @@ class Map:
         marker_cluster.add_to(self.map)
         self.layers.append(marker_cluster)  # Add marker cluster to the layers list
     
-    def add_heatmap(self, locations, radius=10, blur=15, max_zoom=2):
+    def add_heatmap(self, locations, radius=10, blur=15, max_zoom=2, layer_name='Heatmap'):
         gradient = {
             1.0: "maroon",
             0.75: "purple",
@@ -30,11 +30,11 @@ class Map:
             0.24: "yellow",
             0.0: "green"
         }
-        heatmap = HeatMap(locations, radius=radius, blur=blur, max_zoom=max_zoom, gradient=gradient)
+        heatmap = HeatMap(locations, radius=radius, blur=blur, max_zoom=max_zoom, gradient=gradient, name=layer_name)
         heatmap.add_to(self.map)
         self.layers.append(heatmap)  # Add heatmap to the layers list
 
-        # Add custom legend to map
+        # Add custom legend to map 
         legend_html = '''
         <div style="position: fixed;
                     bottom: 50px; left: 50px; width: 100px; height: 190px; 
