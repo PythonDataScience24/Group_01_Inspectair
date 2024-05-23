@@ -15,7 +15,7 @@ Presequisites:
 - Python
 
 # How to get started
-- Download the folder and navigate to the folder on terminal
+- Go to the green code button on the top right on github and download the zipped folder, unzip it and navigate to the folder on terminal
 - Navigate to the terminal and enter the command: pip install -r install_requirements.txt
 - Execute main.py in terminal using the command: python main.py - this will result in a url - open your web browser and go to http://127.0.0.1:8002 to see the Dashboard
 
