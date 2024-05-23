@@ -20,7 +20,7 @@ Presequisites:
 - Navigate to the terminal and enter the command: pip install -r install_requirements.txt
 - Execute main.py in terminal using the command: python main.py - this will result in a url - open your web browser and go to http://127.0.0.1:8002 to see the Dashboard
 
-# Users guide
+# User guide
 ### Parameter selection
 - To get started, choose a pollutant and a region.
 - Choose a time span ranging from 2013 to 2022, the type of weather station you are interested in and the type of data you want to see (pollutant concentration or air quality index).
