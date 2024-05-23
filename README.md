@@ -16,20 +16,20 @@ Presequisites:
 
 # How to get started
 - Go to the <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/1cb8851c-42a5-45b8-8f7d-28039a4d1a43" width="45" height="15">
- button on the top right on github and download the zipped folder, unzip it and navigate to the folder on terminal
+ button on the top right on github and download the zipped folder, unzip it and navigate to the folder on terminal.
 - Navigate to the terminal and enter the command: pip install -r install_requirements.txt
-- Execute main.py in terminal using the command: python main.py - this will result in a url - open your web browser and go to http://127.0.0.1:8002 to see the Dashboard
+- Execute ***main.py*** located in the **scripts** folder in terminal using the command: python main.py - this will result in a url - open your web browser and go to http://127.0.0.1:8002 to see the Dashboard.
 
-# Users guide
+# User guide
 ### Parameter selection
-- To get started, choose a pollutant and a region.
-- Choose a time span ranging from 2013 to 2022, the type of weather station you are interested in and the type of data you want to see (pollutant concentration or air quality index).
+- To get started, choose a **pollutant** and a **region**.
+- Choose a **time span** ranging from 2013 to 2022, the **type of weather station** you are interested in and the **type of data** you want to see (pollutant concentration or air quality index).
 ### Output
 - On the left an interactive plot showing the pollutant concentration across the years can be seen, the interactive legend can be seen on the right of the plot, clicking the name of the region makes it disappear and viceversa.
 - On the right two rankings can be seen, the top ranking shows the most polluted areas and the bottom ranking shows the least polluted areas from the chosen weather stations.
-- At the bottom of the page an interactive map can be seen, the heatmap layer indicates the level of pollution in the air on the regions selected.
+- At the bottom of the page an interactive map can be seen, the heatmap layer which can be removed with the button on the top right corner of the map indicates the level of pollution in the air on the regions selected.
 ### Interpretability and disclaimers
-- There can be a biased created by the heterogeneity of the amount of weather stations present in different countries, this means that some regions will not display any pollution due to a lack of weather stations and therefore a lack of data availability to actually get a measurement of the air quality. 
+- There can be a bias created by the heterogeneity of the amount of weather stations present in different countries, this means that some regions will not display any pollution due to a lack of weather stations and therefore a lack of data availability to actually get a measurement of the air quality. 
 
 # Built With:
 Programming languages:

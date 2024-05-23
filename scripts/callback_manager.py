@@ -152,26 +152,33 @@ class AirQualityCallbacks:
 
             else:
                 filtered_df = filtered_df[filtered_df['who_region'] == selected_continent]
-                fig = go.Figure()
-                df_pollutant_mean_year = filtered_df.pivot_table(index='year', values=selected_pollutant, aggfunc='mean')
-                fig.add_trace(go.Scatter(
-                    x=df_pollutant_mean_year.index,
-                    y=df_pollutant_mean_year[selected_pollutant],
-                    mode='lines',
-                    name=self.data.continent_dict[selected_continent],
-                    line=dict(color='blue')
-                ))
+                filtered_df = filtered_df.dropna(subset=[selected_pollutant])
+                
+                countries = filtered_df['country_name'].unique()
+                colors = ['brown', 'red', 'purple', 'pink', 'green', 'black', 'blue', 'orange', 'grey']
+                for country in countries:
+                    country_data = filtered_df[filtered_df['country_name'] == country]
+                    if not country_data.empty:
+                        df_pollutant_mean_year = country_data.pivot_table(index='year', values=selected_pollutant, aggfunc='mean')
+                        fig.add_trace(go.Scatter(
+                            x=df_pollutant_mean_year.index,
+                            y=df_pollutant_mean_year[selected_pollutant],
+                            mode='lines',
+                            name=country,
+                            line=dict(color=colors[countries.tolist().index(country) % len(colors)])
+                        ))
+
                 fig.update_layout(
-                    title=self.data.legend[selected_pollutant] + ' in ' + self.data.continent_dict[selected_continent],
+                    title=self.data.legend[selected_pollutant] + ' Concentration Across Different Countries in ' + self.data.continent_dict[selected_continent],
                     xaxis_title='Year',
                     yaxis_title=self.data.legend[selected_pollutant],
+                    legend_title='Country',
                     template='plotly_white'
                 )
 
                 top_ranked_10, bottom_ranked_10, color_top, color_bottom = get_rank_10(df=filtered_df,
                                                                                        selected_pollutant=selected_pollutant,
                                                                                        selected_data_type=selected_data_type)
-                #get xlim for log concentration data
 
                 fig_bar_top_10 = create_ranking_plot(
                     selected_data_type=selected_data_type,
