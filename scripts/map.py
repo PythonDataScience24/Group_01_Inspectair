@@ -50,6 +50,7 @@ class Map:
         </div>
         ''' 
         self.map.get_root().html.add_child(folium.Element(legend_html))
+        self.map = folium.LayerControl().add_to(self.map)
 
     def save(self, file_path='map.html'):
         self.map.save(file_path)
