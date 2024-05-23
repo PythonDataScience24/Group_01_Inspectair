@@ -28,9 +28,27 @@ class Map:
             0.24: "yellow",       # Corresponds to normalized AQI value >= 12/500.4
             0.0: "green"          # Corresponds to normalized AQI value >= 0
         }
-
         
         HeatMap(locations, radius=radius, blur=blur, max_zoom=max_zoom, gradient=gradient).add_to(self.map)
+
+        # Add custom legend to map in html as folium does not have a native tool to do it
+        legend_html = '''
+        <div style="position: fixed;
+                    bottom: 50px; left: 50px; width: 100px; height: 190px; 
+                    border:2px solid grey; z-index:9999; font-size:14px;
+                    padding: 10px;">
+        <p style="margin: 0; font-weight: bold;">AQI index<br></p>
+        <p style="margin: 0;">
+            <i style="background:green; width: 20px; height: 20px; display: inline-block;"></i> 0-50<br>
+            <i style="background:yellow; width: 20px; height: 20px; display: inline-block;"></i> 51-100<br>
+            <i style="background:orange; width: 20px; height: 20px; display: inline-block;"></i> 101-150<br>
+            <i style="background:red; width: 20px; height: 20px; display: inline-block;"></i> 151-200<br>
+            <i style="background:purple; width: 20px; height: 20px; display: inline-block;"></i> 201-300<br>
+            <i style="background:maroon; width: 20px; height: 20px; display: inline-block;"></i> 301-500
+        </p>
+        </div>
+        ''' 
+        self.map.get_root().html.add_child(folium.Element(legend_html))
 
     def save(self, file_path='map.html'):
         self.map.save(file_path)
