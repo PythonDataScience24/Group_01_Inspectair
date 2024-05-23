@@ -113,7 +113,7 @@ class AirQualityCallbacks:
                         y=df_pollutant_mean_year[selected_pollutant],
                         mode='lines',
                         name=self.data.continent_dict[region],
-                        line=dict(color=colors[regions.tolist().index(region) % len(colors)])
+                        line=dict(color=colors[regions.tolist().index(region) % len(colors)], width=0.5)
                     ))
                 fig.update_layout(
                     title=self.data.legend[selected_pollutant] + ' Across Different Continents',
@@ -165,7 +165,7 @@ class AirQualityCallbacks:
                             y=df_pollutant_mean_year[selected_pollutant],
                             mode='lines',
                             name=country,
-                            line=dict(color=colors[countries.tolist().index(country) % len(colors)])
+                            line=dict(color=colors[countries.tolist().index(country) % len(colors)], width=0.5) 
                         ))
 
                 fig.update_layout(
