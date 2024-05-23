@@ -1,4 +1,4 @@
-from dash import html, dcc
+from dash import html, dcc, get_asset_url
 import dash_bootstrap_components as dbc
 from map import Map
 
@@ -17,6 +17,7 @@ class AirQualityLayout:
         world_map.save('map.html')
 
         self.app.layout = html.Div([
+            #Pollutant selection row
             dbc.Row([
                 dbc.Col(
                     html.Div([
@@ -27,7 +28,7 @@ class AirQualityLayout:
                             value='pm25_concentration'
                         )
                     ], style={'margin-top': '10px'}),
-                    width=5,
+                    width=4,
                     style={'margin-left': '40px'}
                 ),
                 dbc.Col(
@@ -39,7 +40,20 @@ class AirQualityLayout:
                             value=list(self.data.continent_dict.keys())[0]
                         )
                     ], style={'margin-top': '10px'}),
-                    width=5
+                    width=4
+                ),
+                #Logo
+                dbc.Col(
+                    html.Div([
+                        html.Img(src=get_asset_url('logonotext.png'), style={'height': '68px', 'width': 'auto', 'margin-top': '10px', 'margin-left': 'auto'})
+                    ], style={
+                    'display': 'flex',
+                    'justify-content': 'flex-end',
+                    'align-items': 'center',
+                    'height': '100%'
+                    }),
+                    width={"size": 2, "order": "last", "offset": 3},
+                    style={'margin-left': '145px'}
                 ),
             ], style={'background-color': '#d3d3d3', 
                       'border': '1px solid #ddd', 
@@ -47,6 +61,8 @@ class AirQualityLayout:
                       'box-shadow': '0 4px 8px rgba(0, 0, 0, 0.1)',
                       'padding-bottom': '20px'}),
 
+            
+            #Time selection
             html.Div([
                 html.Label('Time Span:', style={'font-weight': 'bold','margin-left': '20px'}),
                 dcc.RangeSlider(
@@ -58,11 +74,11 @@ class AirQualityLayout:
                     marks={i: str(i) for i in range(2013, 2023, 1)}
                 )
             ], style={'margin-top': '10px', 'margin-bottom': '10px', 'margin-left': '20px', 'margin-right': '20px'}),
-
+            #Row for station choice and data type
             dbc.Row([
                 dbc.Col(
                     html.Div([
-                        html.Label('Station type(s):', style={'font-weight': 'bold'}),
+                        html.Label('Station Type(s):', style={'font-weight': 'bold'}),
                         dcc.Checklist(
                             id='station-type-checklist',
                             options=[{'label': key, 'value': key} for key in self.data.station_type.keys()],
@@ -89,6 +105,7 @@ class AirQualityLayout:
                 ),
             ]),
 
+            #Row for the plots
             dbc.Row([
                 dbc.Col(dcc.Graph(id='indicator-graphic'), width="auto"),
                 dbc.Col([
@@ -107,6 +124,22 @@ class AirQualityLayout:
                         height='600'
                     ),
                     width={"size":10, "offset":1})
-            ], style={'margin-top': '20px'})
+            ], style={'margin-top': '20px'}),
+            #disclaimer
+            dbc.Row([
+                dbc.Col(
+                    html.Div(
+                        "Disclaimer: The data provided is for informational purposes only and provided as an example. The data is neither updated nor is it complete. Additionally location information is skewed and heavily biased according to locations of measurement stations.",
+                        style={
+                            'font-size': '12px',
+                            'background-color': '#FFFFED',
+                            'border': '1px solid #ddd',
+                            'border-radius': '5px',
+                            'padding': '10px',
+                            'margin-top': '20px',
+                        }
+                    )
+                )
+            ])
         ])
 
