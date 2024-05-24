@@ -49,3 +49,5 @@ Folium v0.16.0 <img src = "https://github.com/PythonDataScience24/Group_01_Inspe
 - Titaporn Janjumratsang - nam32
 - Hector Arribas Arias - Hecthor1999
 - Julian Niklaus - JuNi-2000
+# License:
+This project is licensed under the MIT License - see the LICENSE.md file for details
