@@ -36,9 +36,11 @@ Programming languages:
 
 [![Python 3.9.13](https://img.shields.io/badge/Python-3.9.13-blue)](https://www.python.org/downloads/release/python-3913/)  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/b7d12eed-aff4-41c0-981c-25d4d78bbef8" width="42" height="24">
 
+![HTML](https://img.shields.io/badge/HTML-orange) <img src ="https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/9db70f02-af92-4a12-8fcc-0bf55485f2cd" width="20" height="20">
+
 Libraries used for generating visualizations:
 
-[![Matplotlib 3.9.0](https://img.shields.io/badge/Matplotlib-3.9.0-orange)](https://matplotlib.org/stable/users/prev_whats_new/whats_new_3.7.1.html)  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/c83effe2-6e1e-4a1f-9bf3-a199752b5fcb" width="27" height="25">
+[![Matplotlib 3.9.0](https://img.shields.io/badge/Matplotlib-3.9.0-yellow)](https://matplotlib.org/stable/users/prev_whats_new/whats_new_3.7.1.html)  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/c83effe2-6e1e-4a1f-9bf3-a199752b5fcb" width="27" height="25">
 
 [![Plotly 5.22](https://img.shields.io/badge/Plotly-5.22-red)](https://github.com/plotly/plotly.py/releases/tag/v5.22.0) <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/e4d20f34-78bc-4180-a306-6d7c3a2b0cfc" width="38" height="25"> 
 
