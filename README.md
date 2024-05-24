@@ -34,15 +34,15 @@ Presequisites:
 # Built With:
 Programming languages:
 
-Python  v3.9.13  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/b7d12eed-aff4-41c0-981c-25d4d78bbef8" width="42" height="24">
+[![Python 3.9.13](https://img.shields.io/badge/Python-3.9.13-blue)](https://www.python.org/downloads/release/python-3913/)  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/b7d12eed-aff4-41c0-981c-25d4d78bbef8" width="42" height="24">
 
 Libraries used for generating visualizations:
 
-Matplotlib v3.9.0 <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/c83effe2-6e1e-4a1f-9bf3-a199752b5fcb" width="27" height="25">
+[![Matplotlib 3.9.0](https://img.shields.io/badge/Matplotlib-3.9.0-orange)](https://matplotlib.org/stable/users/prev_whats_new/whats_new_3.7.1.html)  <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/c83effe2-6e1e-4a1f-9bf3-a199752b5fcb" width="27" height="25">
 
-Plotly v5.22.0 <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/e4d20f34-78bc-4180-a306-6d7c3a2b0cfc" width="38" height="25"> 
+[![Plotly 5.22](https://img.shields.io/badge/Plotly-5.22-red)](https://github.com/plotly/plotly.py/releases/tag/v5.22.0) <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/e4d20f34-78bc-4180-a306-6d7c3a2b0cfc" width="38" height="25"> 
 
-Folium v0.16.0 <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/cb8513f7-909e-4ea8-94a8-7b291ccd6857"  width="30" height="25">
+[![Folium 0.16.0](https://img.shields.io/badge/Folium-0.16.0-brightgreen)](https://github.com/python-visualization/folium/releases/tag/v0.16.0) <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/cb8513f7-909e-4ea8-94a8-7b291ccd6857"  width="30" height="25">
 
 # Authors:
 - Tim Schlatter - Timsched
