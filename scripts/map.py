@@ -18,6 +18,7 @@ class Map:
         """
         self.map = folium.Map(location=start_coords, zoom_start=zoom_start, max_zoom=max_zoom)
         self.layers = []  # Keep track of layers for the layer control
+        self.station_selected = True
 
     def add_marker(self, location, popup=None, tooltip=None, layer_name='Marker'):
         """
@@ -107,22 +108,49 @@ class Map:
         # Add a new LayerControl
         folium.LayerControl().add_to(self.map)
 
+    def set_station_type_selection(self, selected):
+        """
+        Set the station type selection status.
+
+        Parameters:
+        selected (bool): True if a pollutant is selected, False otherwise.
+        """
+        self.station_selected = selected
+
+    def should_display_map(self):
+        """
+        Determine if the map should be displayed based on station type selection.
+
+        Returns:
+        bool: True if one or multiple stations are selected, False otherwise.
+        """
+        return self.station_selected 
+
     def save(self, file_path='map.html'):
         """
-        Save the map to an HTML file.
+        Save the map to an HTML file. If no layers are added, display a logo instead of the map.
 
         Parameters:
         file_path (str): The file path to save the map.
         """
-        self.update_layer_control()  # Ensure LayerControl is updated before saving
-        self.map.save(file_path)
-
+        if self.should_display_map():
+            self.update_layer_control()  # Ensure Layer control is updated before saving
+            self.map.save(file_path)
+        else:
+             # Return the path to the GIF file
+            gif_path = "no_data.html"
+            with open(gif_path, "w") as f:
+                f.write('<img src="no_data.html">') 
+                
     def get_map(self):
         """
         Get the current map object.
 
         Returns:
-        folium.Map: The current map object.
+        folium.Map: The current map object if layers are added, otherwise None.
         """
-        self.update_layer_control()  # Ensure LayerControl is updated before returning the map
-        return self.map
+        if self.should_display_map():
+            self.update_layer_control()  # Ensure Layer control is updated before returning the map
+            return self.map
+        else:
+            return None
