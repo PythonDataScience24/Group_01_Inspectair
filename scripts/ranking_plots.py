@@ -118,11 +118,12 @@ def create_ranking_plot(selected_data_type, x, y, ranking_type, text=None, xlabe
         plt.xlabel(xlabel)
         plt.title(title)   
         plt.xlim([0,500])
-        # Add explanation for the AQI values as label
-        legend_labels = {'good': 'green', 'moderate': 'yellow', 'unhealthy to sens. groups': 'orange',
-                         'unhealthy': 'orange', 'very unhealthy': 'purple', 'hazardous': 'maroon'}
-        legend_handles = [plt.Line2D([0], [0], color=color, linewidth=3, linestyle='-') for label, color in legend_labels.items()]
-        plt.legend(legend_handles, legend_labels.keys(), title='AQI color scheme')
+        if ranking_type == 'top':
+            # Add explanation for the AQI values as label
+            legend_labels = {'good': 'green', 'moderate': 'yellow', 'unhealthy to sens. groups': 'orange',
+                            'unhealthy': 'orange', 'very unhealthy': 'purple', 'hazardous': 'maroon'}
+            legend_handles = [plt.Line2D([0], [0], color=color, linewidth=3, linestyle='-') for label, color in legend_labels.items()]
+            plt.legend(legend_handles, legend_labels.keys(), title='AQI color scheme')
         plt.gca().spines['top'].set_visible(False) 
         plt.gca().spines['right'].set_visible(False) 
 
