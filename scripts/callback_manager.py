@@ -86,7 +86,31 @@ class AirQualityCallbacks:
                     }],
                     template='plotly_white'
                 )
-                return fig, None, None, open('map.html', 'r').read()
+                # Return the path to the GIF file
+                gif_path = "logos/displayable_logo_1.gif"
+
+                # Get the image from the gif_path
+                html_content = '''
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=0.1">
+                    <title>No Data currently selected</title>
+                </head>
+                <body>
+                    <div style="text-align:center;">
+                        <img src="{}" alt="No Data Available">
+                    </div>
+                </body>
+                </html>
+                '''.format(gif_path)
+
+                # Write the HTML content to an HTML file
+                with open('no_data.html', 'w') as f:
+                    f.write(html_content)
+
+                return fig, None, None, html_content
 
             if selected_station_types.count('all') == 0:
                 filtered_df = filtered_df.dropna(subset=['type_of_stations'])
