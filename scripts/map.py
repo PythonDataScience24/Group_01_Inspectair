@@ -4,7 +4,32 @@ from folium.plugins import MarkerCluster, HeatMap
 class Map:
     """
     A class to create and manage an interactive map with various layers like markers, 
-    clustered markers, and heatmaps using the Folium library (python wrapper for the javascript library leaflet).
+    clustered markers, and heatmaps using the Folium library (Python wrapper for the JavaScript library Leaflet).
+
+    Attributes:
+        map (folium.Map): The Folium map object.
+        layers (list): List to keep track of layers for the layer control.
+        station_selected (bool): Boolean to track if any station type is selected.
+
+    Methods:
+        __init__(start_coords=[20, 0], zoom_start=2, max_zoom=2):
+            Initializes the Map object with starting coordinates, initial zoom level, and maximum zoom level.
+        add_marker(location, popup=None, tooltip=None, layer_name='Marker'):
+            Adds a single marker to the map.
+        add_clustered_markers(locations, popups=None, tooltips=None, layer_name='Clustered Markers'):
+            Adds clustered markers to the map.
+        add_heatmap(locations, radius=10, blur=15, max_zoom=2, layer_name='Heatmap'):
+            Adds a heatmap layer to the map.
+        update_layer_control():
+            Updates the LayerControl to reflect the current layers on the map.
+        set_station_type_selection(selected):
+            Sets the station type selection status.
+        should_display_map():
+            Determines if the map should be displayed based on station type selection.
+        save(file_path='map.html'):
+            Saves the map to an HTML file. If no layers are added, displays a logo instead of the map.
+        get_map():
+            Returns the current map object if layers are added, otherwise returns None.
     """
 
     def __init__(self, start_coords=[20, 0], zoom_start=2, max_zoom=2):
@@ -17,7 +42,8 @@ class Map:
         max_zoom (int): Maximum zoom level for the map.
         """
         self.map = folium.Map(location=start_coords, zoom_start=zoom_start, max_zoom=max_zoom)
-        self.layers = []  # Keep track of layers for the layer control
+        # Keep track of layers for the layer control
+        self.layers = []
         self.station_selected = True
 
     def add_marker(self, location, popup=None, tooltip=None, layer_name='Marker'):
@@ -74,8 +100,10 @@ class Map:
             0.0: "green"
         }
         heatmap = HeatMap(locations, radius=radius, blur=blur, max_zoom=max_zoom, gradient=gradient, name=layer_name)
-        heatmap.add_to(self.map) # Add heatmap as a raster layer to the map
-        self.layers.append(heatmap) # Add layer control to the heatmap
+        # Add heatmap as a raster layer to the map
+        heatmap.add_to(self.map) 
+        # Add layer control to the heatmap
+        self.layers.append(heatmap) 
 
         # Add custom legend to map in html as there is no native tool in folium
         legend_html = '''
@@ -134,7 +162,8 @@ class Map:
         file_path (str): The file path to save the map.
         """
         if self.should_display_map():
-            self.update_layer_control()  # Ensure Layer control is updated before saving
+            # Ensure Layer control is updated before saving
+            self.update_layer_control()  
             self.map.save(file_path)
         else:
              # Return the path to the GIF file
@@ -150,7 +179,8 @@ class Map:
         folium.Map: The current map object if layers are added, otherwise None.
         """
         if self.should_display_map():
-            self.update_layer_control()  # Ensure Layer control is updated before returning the map
+            # Ensure Layer control is updated before returning the map
+            self.update_layer_control()  
             return self.map
         else:
             return None
