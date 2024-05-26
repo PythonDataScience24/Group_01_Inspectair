@@ -3,22 +3,44 @@ import dash_bootstrap_components as dbc
 from map import Map
 
 class AirQualityLayout:
+    """
+    A class to handle the layout of the Air Quality Dashboard.
+
+    Attributes:
+        app: The Dash application instance.
+        data: The air quality data used in the dashboard.
+
+    Methods:
+        set_layout():
+            Sets the layout of the dashboard.
+        set_callbacks():
+            Sets up the Dash callbacks to handle user interactions and update the dashboard.
+    """
     def __init__(self, app, data):
+        """
+        Initializes the AirQualityLayout with the given Dash app and data.
+
+        Args:
+            app: The Dash application instance.
+            data: The air quality data.
+        """
         self.app = app
         self.data = data
         self.set_layout()
         self.set_callbacks()
 
     def set_layout(self):
+        """
+        Creates the Folium map and save it as an HTML file
+        """
         # Create the Folium map and save it as an HTML file
         world_map = Map()
-
         initial_heatmap_data = self.data.df[['latitude', 'longitude', 'pm25_concentration']].dropna().values.tolist()
         world_map.add_heatmap(initial_heatmap_data)
         world_map.save('map.html')
 
         self.app.layout = html.Div([
-            #Pollutant selection row
+            # Pollutant selection row
             dbc.Row([
                 dbc.Col(
                     html.Div([
@@ -43,7 +65,7 @@ class AirQualityLayout:
                     ], style={'margin-top': '10px'}),
                     width=4
                 ),
-                #Logo
+                # Logo
                 dbc.Col(
                     html.Div([
                         html.Img(src=get_asset_url('logonotext.png'), style={'height': '68px', 'width': 'auto', 'margin-top': '10px', 'margin-left': 'auto'})
@@ -61,9 +83,7 @@ class AirQualityLayout:
                       'border-radius': '5px',
                       'box-shadow': '0 4px 8px rgba(0, 0, 0, 0.1)',
                       'padding-bottom': '20px'}),
-
-            
-            #Time selection
+            # Time selection
             html.Div([
                 html.Label('Time Span:', style={'font-weight': 'bold','margin-left': '20px'}),
                 dcc.RangeSlider(
@@ -76,7 +96,7 @@ class AirQualityLayout:
                     marks={i: str(i) for i in range(2013, 2023, 1)}
                 )
             ], style={'margin-top': '10px', 'margin-bottom': '10px', 'margin-left': '20px', 'margin-right': '20px'}),
-            #Row for station choice and data type
+            # Row for station choice and data type
             dbc.Row([
                 dbc.Col(
                     html.Div([
@@ -106,8 +126,7 @@ class AirQualityLayout:
                     width=4
                 ),
             ]),
-
-            #Row for the plots
+            # Row for the plots
             dbc.Row([
                 dbc.Col(dcc.Graph(id='indicator-graphic'), width="auto"),
                 dbc.Col([
@@ -115,7 +134,6 @@ class AirQualityLayout:
                     html.Img(id='bar-graph-matplotlib_bottom', style={'max-width': '100%', 'height': 'auto'})
                 ], width=5),
             ]),
-
             # Add the Folium map 
             dbc.Row([
                 dbc.Col(
@@ -127,7 +145,7 @@ class AirQualityLayout:
                     ),
                     width={"size":10, "offset":1})
             ], style={'margin-top': '20px'}),
-            #disclaimer
+            # Disclaimer
             dbc.Row([
                 dbc.Col(
                     html.Div(
@@ -146,11 +164,23 @@ class AirQualityLayout:
         ])
 
     def set_callbacks(self):
+        """
+        Sets up the Dash callbacks to handle user interactions and update the dashboard.
+        """
         @self.app.callback(
             Output('station-type-checklist', 'options'),
             Input('station-type-checklist', 'value')
         )
         def update_checklist(selected_values):
+            """
+            Updates the station type checklist options based on the selected values.
+
+            Args:
+                selected_values (list): List of selected station types.
+
+            Returns:
+                list: Updated options for the station type checklist.
+            """
             options = [{'label': key, 'value': key} for key in self.data.station_type.keys()] 
             if 'all' in selected_values:
                 for option in options:

@@ -12,17 +12,19 @@ matplotlib.use('agg')
 def get_rank_10(df, selected_pollutant, selected_data_type):
     """
     Function which gets the top 10 values (both highest and lowest) for a selected 
-    pollutant per city, as well as the corresponging AQI colour palettes
+    pollutant per city, as well as the corresponding AQI colour palettes.
     
-    Input: 
-    df: a dataframe prefiltered with the correct timespan, containing the relevant data for the ranking
-    selected_pollutant: a string indicating which pollutant is selected (e.g. no2)
-    selected_datatypes: a string indicating data type ['Concentration', 'AQI]
+    Args: 
+        df (DataFrame): A dataframe prefiltered with the correct timespan, containing the relevant data for the ranking.
+        selected_pollutant (str): A string indicating which pollutant is selected (e.g. 'no2').
+        selected_data_type (str): A string indicating data type ['Concentration', 'AQI'].
 
-    Output: 
-    list of top 10 values (=most polluted), list of bottom 10 values(=least polluted), 
-    list color palette for top 10 values, list color palette for worst 10 values
-    
+    Returns: 
+        tuple: 
+            - DataFrame of top 10 values (=most polluted)
+            - DataFrame of bottom 10 values (=least polluted)
+            - List of color palette for top 10 values
+            - List of color palette for bottom 10 values
     """
     # Get mean pollutant per city in prefiltered timeframe
     mean_pollution_city = pd.pivot_table(data=df, index=['city'], aggfunc='mean', values=selected_pollutant)
@@ -47,22 +49,21 @@ def get_rank_10(df, selected_pollutant, selected_data_type):
 def create_ranking_plot(selected_data_type, x, y, ranking_type, text=None, xlabel=None, color=None, title=None):
     """
     Function which creates a ranking plot using matplotlib (horizontal barplot).
-    The plot is saved to a temporary buffer and emebeded into html as an image. 
+    The plot is saved to a temporary buffer and embedded into HTML as an image. 
     
-    Input: 
-    selected_data_type: a string indicating data type ['Concentration', 'AQI]
-    x: list of float or int to plot as x values in horizontal barplot
-    y: list of float or int to plot as y values in horizontal barplot
-    ranking_type: string indicating type of plot ['top', 'bottom']
-    text: List of strings, will be displayed as text next to the bars
-    xlabel: String containing labelling for x-axis
-    color: list of 10 string color values for the bars
-    title: string indicating plot title
+    Args: 
+        selected_data_type (str): A string indicating data type ['Concentration', 'AQI'].
+        x (list): List of float or int to plot as x values in horizontal barplot.
+        y (list): List of float or int to plot as y values in horizontal barplot.
+        ranking_type (str): String indicating type of plot ['top', 'bottom'].
+        text (list, optional): List of strings, will be displayed as text next to the bars.
+        xlabel (str, optional): String containing labelling for x-axis.
+        color (list, optional): List of 10 string color values for the bars.
+        title (str, optional): String indicating plot title.
 
-    Output:
-    Graph as img emdedded into html
+    Returns:
+        str: Graph as img embedded into HTML.
     """
-    
     # Format the city names - introduce line breaks for long names
     y_formatted = len(y)*[0]
     for i, city_name in enumerate(y):
@@ -138,4 +139,3 @@ def create_ranking_plot(selected_data_type, x, y, ranking_type, text=None, xlabe
     fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
     final_graph = f'data:image/png;base64,{fig_data}'
     return final_graph
-

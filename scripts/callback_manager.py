@@ -1,6 +1,5 @@
 import plotly.graph_objects as go
-from dash import Input, Output
-from dash import html, get_asset_url
+from dash import Input, Output, html, get_asset_url
 import re
 from ranking_plots import get_rank_10, create_ranking_plot
 from map import Map
@@ -28,12 +27,23 @@ class AirQualityCallbacks:
             app: The Dash application instance.
             data: The air quality data.
         """
+
         self.app = app
         self.data = data
         self.set_callbacks()
 
     def generate_folium_map(self, filtered_data, selected_pollutant):
-        # Generate a Folium map with heatmap data
+        """
+        Generates a Folium map with heatmap data.
+
+        Args:
+            filtered_data (DataFrame): The filtered data containing latitude, longitude, and pollutant values.
+            selected_pollutant (str): The selected pollutant to be visualized on the map.
+
+        Returns:
+            str: The HTML content of the generated Folium map.
+        """
+
         world_map = Map()
         heatmap_data = filtered_data[['latitude', 'longitude', selected_pollutant]].dropna().values.tolist()
         world_map.add_heatmap(heatmap_data)
@@ -41,6 +51,9 @@ class AirQualityCallbacks:
         return open('map.html', 'r').read()
 
     def set_callbacks(self):
+        """
+        Sets up the Dash callbacks to handle user interactions and update the dashboard.
+        """
         @self.app.callback(
             Output('indicator-graphic', 'figure'),
             Output('bar-graph-matplotlib', 'src'),
@@ -57,15 +70,15 @@ class AirQualityCallbacks:
             Updates the graphs and map based on the user input.
 
             Args:
-                selected_pollutant: The pollutant selected from the dropdown.
-                selected_continent: The continent selected from the dropdown.
-                selected_year: The range of years selected.
-                selected_station_types: The types of stations selected from the checklist.
-                selected_data_type: The data type selected (concentration or AQI).
+                selected_pollutant (str): The pollutant selected from the dropdown.
+                selected_continent (str): The continent selected from the dropdown.
+                selected_year (list): The range of years selected.
+                selected_station_types (list): The types of stations selected from the checklist.
+                selected_data_type (str): The data type selected (concentration or AQI).
 
             Returns:
-                A tuple containing the updated figure for the main plot, the top ranking bar graph,
-                the bottom ranking bar graph, and the HTML for the Folium map.
+                tuple: A tuple containing the updated figure for the main plot, the top ranking bar graph,
+                       the bottom ranking bar graph, and the HTML for the Folium map.
             """
             selected_from_year = selected_year[0]
             selected_to_year = selected_year[1]
@@ -107,14 +120,17 @@ class AirQualityCallbacks:
                 '''
                 return fig, None, None, no_data_html
 
+            # Filter data based on selected station types
             if selected_station_types.count('all') == 0:
                 filtered_df = filtered_df.dropna(subset=['type_of_stations'])
                 pattern = '|'.join(r'\b{}\b'.format(re.escape(word)) for word in selected_station_types)
                 filtered_df = filtered_df[filtered_df['type_of_stations'].str.contains(pattern, na=False)]
 
+            # Adjust selected pollutant based on data type
             if str(selected_data_type) == 'AQI':
                 selected_pollutant = selected_pollutant.replace("concentration", "aqi")
 
+            # Filter data based on selected year range
             if selected_from_year != 'all':
                 filtered_df = filtered_df[filtered_df['year'] >= int(selected_from_year)]
             if selected_to_year != 'all':
@@ -122,6 +138,7 @@ class AirQualityCallbacks:
 
             fig = go.Figure()
 
+            # For world data - data segmented into continents and plotted
             if selected_continent == '':
                 regions = filtered_df['who_region'].unique()
                 for region in regions:
@@ -134,6 +151,7 @@ class AirQualityCallbacks:
                         name=self.data.continent_dict[region],
                         line=dict(color=colors[regions.tolist().index(region) % len(colors)], width=0.5)
                     ))
+
                 fig.update_layout(
                     title=self.data.legend[selected_pollutant] + ' Across Different Continents',
                     xaxis_title='Year',
@@ -142,6 +160,7 @@ class AirQualityCallbacks:
                     template='plotly_white'
                 )
 
+                # Generate top and bottom ranking plots
                 top_ranked_10, bottom_ranked_10, color_top, color_bottom = get_rank_10(df=filtered_df,
                                                                                        selected_pollutant=selected_pollutant,
                                                                                        selected_data_type=selected_data_type)
@@ -170,6 +189,7 @@ class AirQualityCallbacks:
                 return fig, fig_bar_top_10, fig_bar_bottom_10, self.generate_folium_map(filtered_df, selected_pollutant)
 
             else:
+                # Filter data based on selected continent, segment data into countries from selected continents and plotted
                 filtered_df = filtered_df[filtered_df['who_region'] == selected_continent]
                 filtered_df = filtered_df.dropna(subset=[selected_pollutant])
                 
@@ -195,6 +215,7 @@ class AirQualityCallbacks:
                     template='plotly_white'
                 )
 
+                # Generate top and bottom ranking plots
                 top_ranked_10, bottom_ranked_10, color_top, color_bottom = get_rank_10(df=filtered_df,
                                                                                        selected_pollutant=selected_pollutant,
                                                                                        selected_data_type=selected_data_type)
@@ -222,4 +243,3 @@ class AirQualityCallbacks:
                     text=bottom_ranked_10[selected_pollutant].values)
 
                 return fig, fig_bar_top_10, fig_bar_bottom_10, self.generate_folium_map(filtered_df, selected_pollutant)
-

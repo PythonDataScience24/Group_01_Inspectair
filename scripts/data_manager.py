@@ -34,12 +34,15 @@ class AirQualityData:
             sheet_name (str): The sheet name in the Excel file. Defaults to "Update 2024 (V6.1)".
         """
         
-        file_path = data_path
+        # Load the data from the Excel file
         self.df = pd.read_excel(data_path, sheet_name=sheet_name)
+        
+        # Calculate AQI values and add them to the DataFrame
         self.df["pm25_aqi"] = pd.DataFrame(calculate_aqi("pm25", (self.df["pm25_concentration"]).to_numpy()))
         self.df["pm10_aqi"] = pd.DataFrame(calculate_aqi("pm10", (self.df["pm10_concentration"]).to_numpy()))
         self.df["no2_aqi"] = pd.DataFrame(calculate_aqi("no2", (self.df["no2_concentration"]).to_numpy()))
 
+        # Define legends for pollutants
         self.legend = {
             'pm10_concentration': 'PM10 Concentration',
             'pm25_concentration': 'PM2.5 Concentration',
@@ -49,6 +52,7 @@ class AirQualityData:
             'no2_aqi': 'NO2 AQI'
         }
 
+        # Define continent mappings
         self.continent_dict = {
             '': 'World',
             '1_Afr': 'Africa',
@@ -61,6 +65,7 @@ class AirQualityData:
         }
         self.reverse_continent_dict = {value: key for key, value in self.continent_dict.items()}
 
+        # Define pollutant type mappings
         self.pollutant_type = {
             'pm10_concentration': 'PM10 Concentration',
             'pm25_concentration': 'PM2.5 Concentration',
@@ -68,6 +73,7 @@ class AirQualityData:
         }
         self.reverse_pollutant_type = {value: key for key, value in self.pollutant_type.items()}
 
+        # Define station type mappings
         self.station_type = {
             'all': ['all'],
             'Rural': ['Rural'],
@@ -84,10 +90,12 @@ class AirQualityData:
             for value in values:
                 self.reverse_station_type[value] = key
 
+        # Create options for dropdown menus
         self.continents_options = [{'label': name, 'value': key} for key, name in self.continent_dict.items()]
         self.pollutants_options = [{'label': name, 'value': key} for key, name in self.pollutant_type.items()]
         self.stations_options = [{'label': name, 'value': key} for key, name in self.station_type.items()]
 
+        # Generate options for year dropdown menu
         all_years = np.array(((self.df["year"].dropna().unique()).astype(int)), dtype=str)
         all_years = np.append(all_years, 'all')
         self.years_options = [{'label': name, 'value': name} for name in all_years]
