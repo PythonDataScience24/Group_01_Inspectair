@@ -100,7 +100,7 @@ class AirQualityCallbacks:
                 </head>
                 <body>
                     <div style="text-align:center;">
-                        <img src="{gif_path}" alt="No Data Available" style="height: 68px; width: auto; margin-top: 10px;">
+                        <img src="{gif_path}" alt="No Data Available" style="height: 400px; width: auto; margin-top: 10px;">
                     </div>
                 </body>
                 </html>
