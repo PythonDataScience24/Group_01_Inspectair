@@ -1,5 +1,6 @@
 import plotly.graph_objects as go
 from dash import Input, Output
+from dash import html, get_asset_url
 import re
 from ranking_plots import get_rank_10, create_ranking_plot
 from map import Map
@@ -86,31 +87,25 @@ class AirQualityCallbacks:
                     }],
                     template='plotly_white'
                 )
-                # Return the path to the GIF file
-                gif_path = "logos/displayable_logo_1.gif"
 
-                # Get the image from the gif_path
-                html_content = '''
+                # Create the HTML for the no-data image
+                gif_path = get_asset_url('displayable_logo_1.gif')
+                no_data_html = f'''
                 <!DOCTYPE html>
                 <html lang="en">
                 <head>
                     <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=0.1">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <title>No Data currently selected</title>
                 </head>
                 <body>
                     <div style="text-align:center;">
-                        <img src="{}" alt="No Data Available">
+                        <img src="{gif_path}" alt="No Data Available" style="height: 68px; width: auto; margin-top: 10px;">
                     </div>
                 </body>
                 </html>
-                '''.format(gif_path)
-
-                # Write the HTML content to an HTML file
-                with open('no_data.html', 'w') as f:
-                    f.write(html_content)
-
-                return fig, None, None, html_content
+                '''
+                return fig, None, None, no_data_html
 
             if selected_station_types.count('all') == 0:
                 filtered_df = filtered_df.dropna(subset=['type_of_stations'])
