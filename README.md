@@ -20,7 +20,7 @@ Presequisites:
 - Navigate to the terminal and enter the command ```pip install -r install_requirements.txt```
 - Execute ***main.py*** located in the **scripts** folder in terminal using the command ```python main.py``` - this will result in a url - open your web browser and go to http://127.0.0.1:8002 to see the Dashboard.
 - Alternatively setup a conda environment with the command
-```conda create -f environment.yml``` and then activate it using the command ```conda activate air_quality``` and then run ***main.py*** as above.
+```conda env create -f environment.yml``` and then activate it using the command ```conda activate air_quality``` in your anaconda prompt. Afterwards run ***main.py*** as above.
 
 # User guide
 ### Parameter selection
