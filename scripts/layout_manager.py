@@ -3,13 +3,44 @@ import dash_bootstrap_components as dbc
 from map import Map
 
 class AirQualityLayout:
+    """
+    A class to define the layout and callbacks for the Air Quality Dashboard.
+
+    Attributes:
+    ----------
+    app : Dash
+        The Dash app instance.
+    data : Data
+        An object containing data and options for pollutants, continents, and station types.
+
+    Methods:
+    -------
+    set_layout():
+        Sets the layout of the Dash app.
+    set_callbacks():
+        Defines the callbacks for interactivity in the Dash app.
+    """
     def __init__(self, app, data):
+        """
+        Constructs all the necessary attributes for the AirQualityLayout object.
+
+        Parameters:
+        ----------
+        app : Dash
+            The Dash app instance.
+        data : Data
+            An object containing data and options for pollutants, continents, and station types.
+        """
         self.app = app
         self.data = data
         self.set_layout()
         self.set_callbacks()
 
     def set_layout(self):
+        """
+        Sets the layout of the Dash app including pollutant selection, region selection, time span slider,
+        station type checklist, data type radio buttons, and the plots for the indicator graphic and bar graphs.
+        """
         # Create the Folium map and save it as an HTML file
         world_map = Map()
 
@@ -146,11 +177,28 @@ class AirQualityLayout:
         ])
 
     def set_callbacks(self):
+        """
+        Defines the callbacks for interactivity in the Dash app, such as updating the checklist options 
+        based on selected station types.
+        """
         @self.app.callback(
             Output('station-type-checklist', 'options'),
             Input('station-type-checklist', 'value')
         )
         def update_checklist(selected_values):
+            """
+            Updates the checklist options based on the selected station types.
+
+            Parameters:
+            ----------
+            selected_values : list
+                List of selected station types.
+
+            Returns:
+            -------
+            list
+                Updated list of checklist options with appropriate enabling/disabling.
+            """
             options = [{'label': key, 'value': key} for key in self.data.station_type.keys()] 
             if 'all' in selected_values:
                 for option in options:
