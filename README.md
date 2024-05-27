@@ -17,8 +17,10 @@ Presequisites:
 # How to get started
 - Go to the <img src = "https://github.com/PythonDataScience24/Group_01_Inspectair/assets/146727878/1cb8851c-42a5-45b8-8f7d-28039a4d1a43" width="45" height="15">
  button on the top right on github and download the zipped folder, unzip it and navigate to the folder on terminal.
-- Navigate to the terminal and enter the command: pip install -r install_requirements.txt
-- Execute ***main.py*** located in the **scripts** folder in terminal using the command: python main.py - this will result in a url - open your web browser and go to http://127.0.0.1:8002 to see the Dashboard.
+- Navigate to the terminal and enter the command ```pip install -r install_requirements.txt```
+- Execute ***main.py*** located in the **scripts** folder in terminal using the command ```python main.py``` - this will result in a url - open your web browser and go to http://127.0.0.1:8002 to see the Dashboard.
+- Alternatively setup a conda environment with the command
+```conda env create -f environment.yml``` and then activate it using the command ```conda activate air_quality``` in your anaconda prompt. Afterwards run ***main.py*** as above.
 
 # User guide
 ### Parameter selection

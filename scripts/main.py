@@ -15,6 +15,7 @@ import dash_bootstrap_components as dbc
 from data_manager import AirQualityData
 from layout_manager import AirQualityLayout
 from callback_manager import AirQualityCallbacks
+from pathlib import Path
 
 # Change path to your path
 current_directory= os.getcwd()
@@ -44,21 +45,23 @@ class AirQualityDashboard:
 
     def run_server(self):
         """
-        Runs Dash on the specified port
+        Runs Dash on port (8002).
         """
         self.app.run_server(debug=False, port=8002)
 
 
 if __name__ == '__main__':
-    DATA_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"who_ambient_air_quality_database_version_2024_(v6.1).xlsx")
+
+    # Define the path to the data file
+    DATA_FILE_PATH = Path(__file__).resolve().parents[1] / "who_ambient_air_quality_database_version_2024_(v6.1).xlsx"
     
     try:
-        # Attempt to create an instance of the AirQualityDashboard and run the server
+        # Try to create an instance of the AirQualityDashboard and run the server
         DASHBOARD = AirQualityDashboard(DATA_FILE_PATH)
         DASHBOARD.run_server()
     except FileNotFoundError as e:
         # Handle the case where data file does not exist
         print(f"Error: The file '{DATA_FILE_PATH}' does not exist. Please check the file path and try again.")
     except Exception as e:
-        # Handle any other exceptions during initialization
+        # Handle any other exceptions during initialization, printing the error message
         print(f"Error: {e}")

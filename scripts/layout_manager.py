@@ -40,16 +40,16 @@ class AirQualityLayout:
         """
         Sets the layout of the Dash app including pollutant selection, region selection, time span slider,
         station type checklist, data type radio buttons, and the plots for the indicator graphic and bar graphs.
+        Creates the Folium map and save it as an HTML file
         """
         # Create the Folium map and save it as an HTML file
         world_map = Map()
-
         initial_heatmap_data = self.data.df[['latitude', 'longitude', 'pm25_concentration']].dropna().values.tolist()
         world_map.add_heatmap(initial_heatmap_data)
         world_map.save('map.html')
 
         self.app.layout = html.Div([
-            #Pollutant selection row
+            # Pollutant selection row
             dbc.Row([
                 dbc.Col(
                     html.Div([
@@ -74,7 +74,7 @@ class AirQualityLayout:
                     ], style={'margin-top': '10px'}),
                     width=4
                 ),
-                #Logo
+                # Logo
                 dbc.Col(
                     html.Div([
                         html.Img(src=get_asset_url('logonotext.png'), style={'height': '68px', 'width': 'auto', 'margin-top': '10px', 'margin-left': 'auto'})
@@ -92,9 +92,7 @@ class AirQualityLayout:
                       'border-radius': '5px',
                       'box-shadow': '0 4px 8px rgba(0, 0, 0, 0.1)',
                       'padding-bottom': '20px'}),
-
-            
-            #Time selection
+            # Time selection
             html.Div([
                 html.Label('Time Span:', style={'font-weight': 'bold','margin-left': '20px'}),
                 dcc.RangeSlider(
@@ -107,7 +105,7 @@ class AirQualityLayout:
                     marks={i: str(i) for i in range(2013, 2023, 1)}
                 )
             ], style={'margin-top': '10px', 'margin-bottom': '10px', 'margin-left': '20px', 'margin-right': '20px'}),
-            #Row for station choice and data type
+            # Row for station choice and data type
             dbc.Row([
                 dbc.Col(
                     html.Div([
@@ -137,8 +135,7 @@ class AirQualityLayout:
                     width=4
                 ),
             ]),
-
-            #Row for the plots
+            # Row for the plots
             dbc.Row([
                 dbc.Col(dcc.Graph(id='indicator-graphic'), width="auto"),
                 dbc.Col([
@@ -146,7 +143,6 @@ class AirQualityLayout:
                     html.Img(id='bar-graph-matplotlib_bottom', style={'max-width': '100%', 'height': 'auto'})
                 ], width=5),
             ]),
-
             # Add the Folium map 
             dbc.Row([
                 dbc.Col(
@@ -158,7 +154,7 @@ class AirQualityLayout:
                     ),
                     width={"size":10, "offset":1})
             ], style={'margin-top': '20px'}),
-            #disclaimer
+            # Disclaimer
             dbc.Row([
                 dbc.Col(
                     html.Div(
@@ -178,8 +174,7 @@ class AirQualityLayout:
 
     def set_callbacks(self):
         """
-        Defines the callbacks for interactivity in the Dash app, such as updating the checklist options 
-        based on selected station types.
+        Sets up the Dash callbacks to handle user interactions and update the dashboard.
         """
         @self.app.callback(
             Output('station-type-checklist', 'options'),

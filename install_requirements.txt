@@ -1,9 +1,23 @@
+# Dash and related components
 dash
 dash-bootstrap-components
+
+# Data manipulation and analysis
 pandas
 numpy
+
+# Plotting and visualization
 plotly
-folium
 matplotlib
+
+# Map visualization
+folium
+
+# Excel file handling
 openpyxl
+
+# Regular expressions
 regex
+
+# File and path handling
+pathlib
