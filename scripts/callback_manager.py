@@ -98,7 +98,8 @@ class AirQualityCallbacks:
                         "showarrow": False,
                         "font": {"size": 16}
                     }],
-                    template='plotly_white'
+                    template='plotly_white',
+                    showlegend=True
                 )
 
                 # Create the HTML for the no-data image
@@ -129,6 +130,9 @@ class AirQualityCallbacks:
             # Adjust selected pollutant based on data type
             if str(selected_data_type) == 'AQI':
                 selected_pollutant = selected_pollutant.replace("concentration", "aqi")
+                pollutant_legend_title = self.data.legend[selected_pollutant].replace("Concentration", "AQI")
+            else:
+                pollutant_legend_title = self.data.legend[selected_pollutant]
 
             # Filter data based on selected year range
             if selected_from_year != 'all':
@@ -157,7 +161,8 @@ class AirQualityCallbacks:
                     xaxis_title='Year',
                     yaxis_title=self.data.legend[selected_pollutant],
                     legend_title='Region',
-                    template='plotly_white'
+                    template='plotly_white',
+                    showlegend=True
                 )
 
                 # Generate top and bottom ranking plots
@@ -212,7 +217,8 @@ class AirQualityCallbacks:
                     xaxis_title='Year',
                     yaxis_title=self.data.legend[selected_pollutant],
                     legend_title='Country',
-                    template='plotly_white'
+                    template='plotly_white',
+                    showlegend=True
                 )
 
                 # Generate top and bottom ranking plots

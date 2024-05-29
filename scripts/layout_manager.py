@@ -110,11 +110,11 @@ class AirQualityLayout:
                 dbc.Col(
                     html.Div([
                         html.Label('Station Type(s):', style={'font-weight': 'bold'}),
-                        dcc.Checklist(
+                        dcc.Dropdown(
                             id='station-type-checklist',
                             options=[{'label': key, 'value': key} for key in self.data.station_type.keys()],
                             value=['all'],
-                            inline=True
+                            multi=True
                         )
                     ], style={'margin-top': '10px', 'margin-bottom': '10px'}),
                     width=6, style={'margin-left': '40px'}
