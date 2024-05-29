@@ -81,7 +81,7 @@ def create_ranking_plot(selected_data_type, x, y, ranking_type, text=None, xlabe
     
     # Separate plots depening on the selected data type (AQI or concentration)
     if str(selected_data_type == 'Concentration'):
-        fig, ax = plt.subplots(figsize = (12,6))
+        fig, ax = plt.subplots(figsize = (14,6))
         # Create horizontal barplot
         plt.barh(y_formatted, np.log10(x), color=color, edgecolor='black')
         plt.xlabel(f'Log10 {xlabel}')
@@ -113,7 +113,7 @@ def create_ranking_plot(selected_data_type, x, y, ranking_type, text=None, xlabe
 
     
     if str(selected_data_type)=='AQI':
-        fig, ax = plt.subplots(figsize = (12,6))
+        fig, ax = plt.subplots(figsize = (14,6))
         # Create horizontal barplot
         plt.barh(y_formatted, x, color=color, edgecolor='black')
         plt.xlabel(xlabel)

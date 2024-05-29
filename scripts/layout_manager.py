@@ -135,13 +135,15 @@ class AirQualityLayout:
                     width=4
                 ),
             ]),
-            # Row for the plots
+            #Row for the plots
             dbc.Row([
-                dbc.Col(dcc.Graph(id='indicator-graphic'), width="auto"),
+                dbc.Col(dcc.Graph(id='indicator-graphic'), width=12),
+            ]),
+             dbc.Row([
                 dbc.Col([
-                    html.Img(id='bar-graph-matplotlib', style={'max-width': '100%', 'height': 'auto'}),
-                    html.Img(id='bar-graph-matplotlib_bottom', style={'max-width': '100%', 'height': 'auto'})
-                ], width=5),
+                    html.Img(id='bar-graph-matplotlib', style={'max-width': '50%', 'height': 'auto'}),
+                    html.Img(id='bar-graph-matplotlib_bottom', style={'max-width': '50%', 'height': 'auto'})
+                ]),
             ]),
             # Add the Folium map 
             dbc.Row([
