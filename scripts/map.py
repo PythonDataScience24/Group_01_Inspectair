@@ -45,9 +45,6 @@ class Map:
         # Keep track of layers for the layer control
         self.layers = []
         self.station_selected = True
-        self.use_aqi_legend = False  # Initialize the attribute to track the legend type
-        self.pollutant_type = None   # Initialize the attribute to track the pollutant type
-        self.legend = None  # Track the legend element
 
     def add_marker(self, location, popup=None, tooltip=None, layer_name='Marker'):
         """
@@ -103,88 +100,29 @@ class Map:
             0.0: "green"
         }
         heatmap = HeatMap(locations, radius=radius, blur=blur, max_zoom=max_zoom, gradient=gradient, name=layer_name)
-        heatmap.add_to(self.map)
-        self.layers.append(heatmap)
+        # Add heatmap as a raster layer to the map
+        heatmap.add_to(self.map) 
+        # Add layer control to the heatmap
+        self.layers.append(heatmap) 
 
-        self.update_legend()  # Update the legend after adding the heatmap
-
-    def update_legend(self):
-        """
-        Update the legend based on the current settings for AQI and pollutant type.
-        """
-        legend_html = ''  # Initialize legend_html with an empty string
-        # Choose the appropriate legend based on the use_aqi_legend attribute and the pollutant/concentration selected
-        if self.use_aqi_legend:
-            legend_html = '''
-            <div style="position: fixed;
-                        bottom: 50px; left: 50px; width: 100px; height: 190px; 
-                        border:2px solid grey; z-index:9999; font-size:14px;
-                        padding: 10px;">
-            <p style="margin: 0; font-weight: bold;">AQI index<br></p>
-            <p style="margin: 0;">
-                <i style="background:green; width: 20px; height: 20px; display: inline-block;"></i> 0-50<br>
-                <i style="background:yellow; width: 20px; height: 20px; display: inline-block;"></i> 51-100<br>
-                <i style="background:orange; width: 20px; height: 20px; display: inline-block;"></i> 101-150<br>
-                <i style="background:red; width: 20px; height: 20px; display: inline-block;"></i> 151-200<br>
-                <i style="background:purple; width: 20px; height: 20px; display: inline-block;"></i> 201-300<br>
-                <i style="background:maroon; width: 20px; height: 20px; display: inline-block;"></i> 301-500
-            </p>
-            </div>
-            '''
-        elif self.pollutant_type == 'PM2.5' and not self.use_aqi_legend: # put here concentration and 2.5 is selected
-            legend_html = '''
-            <div style="position: fixed;
-                        bottom: 50px; left: 50px; width: 110px; height: 175px; 
-                        border:2px solid grey; z-index:9999; font-size:14px;
-                        padding: 10px;">
-            <p style="margin: 0; font-weight: bold;">Concentration 2.5 (ug/m3)<br></p>
-            <p style="margin: 0;">
-                <i style="background:green; width: 20px; height: 20px; display: inline-block;"></i> 0-9<br>
-                <i style="background:yellow; width: 20px; height: 20px; display: inline-block;"></i> 9.1-35.4<br>
-                <i style="background:orange; width: 20px; height: 20px; display: inline-block;"></i> 35.5-54<br>
-                <i style="background:red; width: 20px; height: 20px; display: inline-block;"></i> 55.5-125.4<br>
-                <i style="background:purple; width: 20px; height: 20px; display: inline-block;"></i> 125.5-225.4
-            </p>
-            </div>
-            '''
-        elif self.pollutant_type == 'PM10' and not self.use_aqi_legend: # put here concentration and 10 is selected
-            legend_html = '''
-            <div style="position: fixed;
-                        bottom: 50px; left: 50px; width: 110px; height: 175px; 
-                        border:2px solid grey; z-index:9999; font-size:14px;
-                        padding: 10px;">
-            <p style="margin: 0; font-weight: bold;">Concentration 10 (ug/m3)<br></p>
-            <p style="margin: 0;">
-                <i style="background:green; width: 20px; height: 20px; display: inline-block;"></i> 0-54<br>
-                <i style="background:yellow; width: 20px; height: 20px; display: inline-block;"></i> 55-154<br>
-                <i style="background:orange; width: 20px; height: 20px; display: inline-block;"></i> 155-254<br>
-                <i style="background:red; width: 20px; height: 20px; display: inline-block;"></i> 255-354<br>
-                <i style="background:purple; width: 20px; height: 20px; display: inline-block;"></i> 355-424
-            </p>
-            </div>
-            '''
-        elif self.pollutant_type == 'NO2' and not self.use_aqi_legend: #put here concentration and NO2
-            legend_html = '''
-                <div style="position: fixed;
-                            bottom: 50px; left: 50px; width: 110px; height: 175px; 
-                            border:2px solid grey; z-index:9999; font-size:14px;
-                            padding: 10px;">
-                <p style="margin: 0; font-weight: bold;">Concentration (ppb)<br></p>
-                <p style="margin: 0;">
-                    <i style="background:green; width: 20px; height: 20px; display: inline-block;"></i> 0-53<br>
-                    <i style="background:yellow; width: 20px; height: 20px; display: inline-block;"></i> 54-100<br>
-                    <i style="background:orange; width: 20px; height: 20px; display: inline-block;"></i> 101-360<br>
-                    <i style="background:red; width: 20px; height: 20px; display: inline-block;"></i> 361-649<br>
-                    <i style="background:purple; width: 20px; height: 20px; display: inline-block;"></i> 650-1249
-                </p>
-                </div>
-                '''
-
-        if self.legend:
-            self.map.get_root().html._children.pop(self.legend.get_name())
-
-        self.legend = folium.Element(legend_html)
-        self.map.get_root().html.add_child(self.legend)
+        # Add custom legend to map in html as there is no native tool in folium
+        legend_html = '''
+        <div style="position: fixed;
+                    bottom: 50px; left: 50px; width: 100px; height: 190px; 
+                    border:2px solid grey; z-index:9999; font-size:14px;
+                    padding: 10px;">
+        <p style="margin: 0; font-weight: bold;">AQI index<br></p>
+        <p style="margin: 0;">
+            <i style="background:green; width: 20px; height: 20px; display: inline-block;"></i> 0-50<br>
+            <i style="background:yellow; width: 20px; height: 20px; display: inline-block;"></i> 51-100<br>
+            <i style="background:orange; width: 20px; height: 20px; display: inline-block;"></i> 101-150<br>
+            <i style="background:red; width: 20px; height: 20px; display: inline-block;"></i> 151-200<br>
+            <i style="background:purple; width: 20px; height: 20px; display: inline-block;"></i> 201-300<br>
+            <i style="background:maroon; width: 20px; height: 20px; display: inline-block;"></i> 301-500
+        </p>
+        </div>
+        '''
+        self.map.get_root().html.add_child(folium.Element(legend_html))
 
     def update_layer_control(self):
         """
@@ -207,24 +145,6 @@ class Map:
         """
         self.station_selected = selected
 
-    def set_use_aqi_legend(self, use_aqi):
-        """
-        Set the legend type to be used (AQI or concentration).
-
-        Parameters:
-        use_aqi (bool): True to use AQI legend, False to use concentration legend.
-        """
-        self.use_aqi_legend = use_aqi
-
-    def set_pollutant_type(self, pollutant_type):
-        """
-        Set the pollutant type for the legend.
-
-        Parameters:
-        pollutant_type (str): The type of pollutant (e.g., 'PM2.5', 'PM10', 'NO2').
-        """
-        self.pollutant_type = pollutant_type
-
     def should_display_map(self):
         """
         Determine if the map should be displayed based on station type selection.
@@ -232,7 +152,7 @@ class Map:
         Returns:
         bool: True if one or multiple stations are selected, False otherwise.
         """
-        return self.station_selected
+        return self.station_selected 
 
     def save(self, file_path='map.html'):
         """
@@ -246,11 +166,11 @@ class Map:
             self.update_layer_control()  
             self.map.save(file_path)
         else:
-            # Return the path to the GIF file
+             # Return the path to the GIF file
             gif_path = "no_data.html"
             with open(gif_path, "w") as f:
                 f.write('<img src="no_data.html">') 
-
+                
     def get_map(self):
         """
         Get the current map object.
@@ -264,4 +184,3 @@ class Map:
             return self.map
         else:
             return None
-
