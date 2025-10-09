@@ -47,7 +47,7 @@ class AirQualityDashboard:
         """
         Runs Dash on port (8002).
         """
-        self.app.run_server(debug=False, port=8002)
+        self.app.run(debug=False, port=8002)
 
 
 if __name__ == '__main__':
